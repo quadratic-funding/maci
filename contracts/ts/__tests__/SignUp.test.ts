@@ -168,6 +168,7 @@ describe('MACI', () => {
                     ethers.utils.defaultAbiCoder.encode(['uint256'], [0]), // Any value is fine as the ConstantInitialVoiceCreditProxy will ignore it
                     { gasLimit: 2000000 },
                 )
+
             } catch (e) {
                 expect(e.message.endsWith('SignUpTokenGatekeeper: this user does not own the token')).toBeTruthy()
             }
@@ -199,6 +200,11 @@ describe('MACI', () => {
 
             const root = await maciContract.getStateTreeRoot()
             expect(maciState.genStateRoot().toString()).toEqual(root.toString())
+
+            const iface = new ethers.utils.Interface(maciContract.interface.abi)
+
+            const index = iface.parseLog(receipt.logs[1]).values._stateIndex
+            expect(index.toString()).toEqual(maciState.users.length.toString())
         })
 
         it('a user who uses a previously used SignUpToken to sign up should not be able to do so', async () => {

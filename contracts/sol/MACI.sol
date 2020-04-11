@@ -85,7 +85,7 @@ contract MACI is Ownable, DomainObjs {
     uint256 public numSignUps = 0;
 
     // Events
-    event SignUp(PubKey indexed _userPubKey);
+    event SignUp(PubKey indexed _userPubKey, uint256 indexed _stateIndex);
 
     event PublishMessage(
         Message indexed _message,
@@ -247,7 +247,9 @@ contract MACI is Ownable, DomainObjs {
 
         numSignUps ++;
 
-        emit SignUp(_userPubKey);
+        // numSignUps is equal to the state index of the leaf which was just
+        // added to the state tree above
+        emit SignUp(_userPubKey, numSignUps);
     }
 
     /*
