@@ -143,7 +143,7 @@ class PubKey {
     }
 
     public static unserialize = (s: string): PubKey => {
-        const packed = Buffer.from(s.slice(2), 'hex')
+        const packed = Buffer.from(s.slice(7), 'hex')
         return new PubKey(unpackPubKey(packed))
     }
 }

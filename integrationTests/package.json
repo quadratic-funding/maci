@@ -8,8 +8,10 @@
         "build": "tsc",
         "test": "jest",
         "test-debug": "node --inspect-brk ./node_modules/.bin/jest",
-        "test-genMaciKeypair": "jest genMaciKeypair.test.ts",
-        "test-genMaciKeypair-debug": "node --inspect-brk ./node_modules/.bin/jest genMaciKeypair.test.ts"
+        "test-cli-genMaciKeypair": "jest cli-genMaciKeypair.test.ts",
+        "test-cli-genMaciKeypair-debug": "node --inspect-brk ./node_modules/.bin/jest cli-genMaciKeypair.test.ts",
+        "test-cli-genMaciPubkey": "jest cli-genMaciPubkey.test.ts",
+        "test-cli-genMaciPubkey-debug": "node --inspect-brk ./node_modules/.bin/jest cli-genMaciPubkey.test.ts"
     },
     "dependencies": {
     },

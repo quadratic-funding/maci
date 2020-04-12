@@ -1,12 +1,11 @@
-import * as shell from 'shelljs'
 import {
     PubKey,
     PrivKey,
 } from 'maci-domainobjs'
 
-const exec = (command: string) => {
-    return shell.exec(command, { silent: true })
-}
+import { genPubKey } from 'maci-crypto'
+
+import { exec } from './utils'
 
 describe('genMaciKeypair CLI subcommand', () => {
     it('genMaciKeypair should output a random private key and public key', async () => {
@@ -24,8 +23,13 @@ describe('genMaciKeypair CLI subcommand', () => {
         const sk = PrivKey.unserialize(lines[0].split(' ')[2])
         expect(sk instanceof PrivKey).toBeTruthy()
 
-        const pk = PubKey.unserialize(lines[0].split(' ')[1])
+        const pk = PubKey.unserialize(lines[1].split(' ')[3])
         expect(pk instanceof PubKey).toBeTruthy()
+
+        const pk2 = genPubKey(sk.rawPrivKey)
+        expect(pk.rawPubKey[0].toString()).toEqual(pk2[0].toString())
+        expect(pk.rawPubKey[1].toString()).toEqual(pk2[1].toString())
+        debugger
     })
 
     it('genMaciKeypair with -p should output a deterministic private key and public key', async () => {

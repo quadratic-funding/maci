@@ -1,15 +1,7 @@
 import * as argparse from 'argparse' 
+import { genMaciKeypair } from './genMaciKeypair'
+import { genMaciPubkey } from './genMaciPubkey'
 
-import {
-    passphraseToPrivKey,
-    genPubKey,
-} from 'maci-crypto'
-
-import {
-    PubKey,
-    PrivKey,
-    Keypair,
-} from 'maci-domainobjs'
 
 const main = async () => {
     const parser = new argparse.ArgumentParser({ 
@@ -21,12 +13,12 @@ const main = async () => {
         dest: 'subcommand',
     })
 
-    const genMaciKeypair = subparsers.addParser(
+    const genMaciKeypairParser = subparsers.addParser(
         'genMaciKeypair',
         { addHelp: true },
     )
 
-    genMaciKeypair.addArgument(
+    genMaciKeypairParser.addArgument(
         ['-p', '--passphrase'],
         {
             action: 'store',
@@ -35,36 +27,28 @@ const main = async () => {
         }
     )
 
+    const genMaciPubkeyParser = subparsers.addParser(
+        'genMaciPubkey',
+        { addHelp: true },
+    )
+
+    genMaciPubkeyParser.addArgument(
+        ['-sk', '--privkey'],
+        {
+            required: true,
+            action: 'store',
+            type: 'string',
+            help: 'This command will output the serialized public key associated with this serialized private key.',
+        }
+    )
+
     const args = parser.parseArgs()
 
-
+    // Execute the subcommand method
     if (args.subcommand === 'genMaciKeypair') {
-        const passphrase = args.passphrase
-        if (passphrase && passphrase.length < 32) {
-            console.error('Error: the passphrase must be at least 32 characters long.')
-            process.exit(1)
-        }
-
-        let keypair
-
-        if (passphrase) {
-            keypair = new Keypair(
-                new PrivKey(await passphraseToPrivKey(passphrase))
-            )
-        } else {
-            keypair = new Keypair()
-        }
-        
-        const serializedPrivKey = keypair.privKey.serialize()
-        const serializedPubKey = keypair.pubKey.serialize()
-        console.log('Private key:', serializedPrivKey)
-        console.log('Public key: ', serializedPubKey)
-
-        if (passphrase) {
-            console.log('\nPlease store your passphrase and/or private key in a safe place and do not reveal it to anyone.')
-        } else {
-            console.log('\nPlease store your private key in a safe place and do not reveal it to anyone.')
-        }
+        await genMaciKeypair(args)
+    } else if (args.subcommand === 'genMaciPubkey') {
+        await genMaciPubkey(args)
     }
 }
 
