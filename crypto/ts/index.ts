@@ -93,7 +93,8 @@ const hashLeftRight = (left: SnarkBigInt, right: SnarkBigInt): SnarkBigInt => {
  * we then use this efficient algorithm:
  * http://cvsweb.openbsd.org/cgi-bin/cvsweb/~checkout~/src/lib/libc/crypt/arc4random_uniform.c
  */
-const genRandomBabyJubValue: SnarkBigInt = () => {
+const genRandomBabyJubValue: SnarkBigInt = (
+) => {
 
     // Check whether we are using the correct value for SNARK_FIELD_SIZE
     assert(SNARK_FIELD_SIZE.eq(snarkjs.bn128.r))
@@ -156,6 +157,24 @@ const formatPrivKeyForBabyJub = (privKey: PrivKey) => {
     )
 
     return snarkjs.bigInt.leBuff2int(sBuff).shr(3)
+}
+
+/*
+ * Losslessly reduces the size of the representation of a public key
+ * @param pubKey The public key to pack
+ * @return A packed public key
+ */
+const packPubKey = (pubKey: PubKey): Buffer => {
+    return babyJub.packPoint(pubKey)
+}
+
+/*
+ * Restores the original PubKey from its packed representation
+ * @param packed The value to unpack
+ * @return The unpacked public key
+ */
+const unpackPubKey = (packed: Buffer): PubKey => {
+    return babyJub.unpackPoint(packed)
 }
 
 /*
@@ -330,4 +349,6 @@ export {
     NOTHING_UP_MY_SLEEVE,
     SNARK_FIELD_SIZE,
     bigInt2Buffer,
+    packPubKey,
+    unpackPubKey,
 }

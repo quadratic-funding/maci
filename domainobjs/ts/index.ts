@@ -18,6 +18,8 @@ import {
     genPubKey,
     formatPrivKeyForBabyJub,
     genEcdhSharedKey,
+    packPubKey,
+    unpackPubKey,
 } from 'maci-crypto'
 
 interface Keypair {
@@ -88,6 +90,16 @@ class PrivKey {
     public asCircuitInputs = () => {
         return formatPrivKeyForBabyJub(this.rawPrivKey).toString()
     }
+
+    public serialize = (): string => {
+        const prefix: string = 'macisk.'
+        return prefix + this.rawPrivKey.toString(16)
+    }
+
+    public static unserialize = (s: string): PrivKey => {
+        const x = s.slice(7)
+        return new PrivKey(bigInt('0x' + x))
+    }
 }
 
 class PubKey {
@@ -122,6 +134,17 @@ class PubKey {
             this.rawPubKey[0],
             this.rawPubKey[1],
         ]
+    }
+
+    public serialize = (): string => {
+        const prefix: string = 'macipk.'
+        const packed = packPubKey(this.rawPubKey).toString('hex')
+        return prefix + packed.toString(16)
+    }
+
+    public static unserialize = (s: string): PubKey => {
+        const packed = Buffer.from(s.slice(2), 'hex')
+        return new PubKey(unpackPubKey(packed))
     }
 }
 
