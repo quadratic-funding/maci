@@ -151,6 +151,11 @@ describe('MACI', () => {
 
     describe('Sign-ups', () => {
 
+        it('An empty MaciState should have the correct state root', async () => {
+            const contractStateRoot = await maciContract.getStateTreeRoot()
+            expect(contractStateRoot.toString()).toEqual(maciState.genStateRoot().toString())
+        })
+
         it('a user who does not own a SignUpToken should not be able to sign up', async () => {
             expect.assertions(1)
 
@@ -198,11 +203,11 @@ describe('MACI', () => {
 
             expect(receipt.status).toEqual(1)
 
+            // The roots should match
             const root = await maciContract.getStateTreeRoot()
             expect(maciState.genStateRoot().toString()).toEqual(root.toString())
 
             const iface = new ethers.utils.Interface(maciContract.interface.abi)
-
             const index = iface.parseLog(receipt.logs[1]).values._stateIndex
             expect(index.toString()).toEqual(maciState.users.length.toString())
         })

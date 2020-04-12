@@ -8,10 +8,8 @@
         "build": "tsc",
         "test": "jest",
         "test-debug": "node --inspect-brk ./node_modules/.bin/jest",
-        "test-publishMessage": "jest PublishMessage.test.ts",
-        "test-publishMessage-debug": "node --inspect-brk ./node_modules/.bin/jest PublishMessage.test.ts",
-        "test-signUp": "jest SignUp.test.ts",
-        "test-signUp-debug": "node --inspect-brk ./node_modules/.bin/jest SignUp.test.ts"
+        "test-genMaciKeypair": "jest genMaciKeypair.test.ts",
+        "test-genMaciKeypair-debug": "node --inspect-brk ./node_modules/.bin/jest genMaciKeypair.test.ts"
     },
     "dependencies": {
     },
@@ -23,6 +21,7 @@
         "@types/node": "^13.1.2",
         "ts-jest": "^24.2.0",
         "module-alias": "^2.2.2",
+        "shelljs": "^0.8.3",
         "ethers": "^4.0.45",
         "jest": "^24.9.0",
         "maci-config": "1.0.0",

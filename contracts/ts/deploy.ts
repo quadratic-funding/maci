@@ -76,6 +76,13 @@ const deployMaci = async (
     deployer,
     signUpGatekeeperAddress: string,
     initialVoiceCreditProxy: string,
+    stateTreeDepth: number = config.maci.merkleTrees.stateTreeDepth,
+    messageTreeDepth: number = config.maci.merkleTrees.messageTreeDepth,
+    quadVoteTallyBatchSize: number = config.maci.quadVoteTallyBatchSize,
+    messageBatchSize: number = config.maci.messageBatchSize,
+    voteOptionsMaxLeafIndex: number = config.maci.voteOptionsMaxLeafIndex,
+    signUpDurationInSeconds: number = config.maci.signUpDurationInSeconds,
+    votingDurationInSeconds: number = config.maci.votingDurationInSeconds,
 ) => {
     console.log('Deploying MiMC')
     const mimcContract = await deployer.deploy(MiMC, {})
@@ -90,18 +97,15 @@ const deployMaci = async (
     const maciContract = await deployer.deploy(
         MACI,
         { MiMC: mimcContract.contractAddress },
-        { 
-            stateTreeDepth: config.maci.merkleTrees.stateTreeDepth,
-            messageTreeDepth: config.maci.merkleTrees.messageTreeDepth,
-        },
-        config.maci.quadVoteTallyBatchSize,
-        config.maci.messageBatchSize,
-        config.maci.voteOptionsMaxLeafIndex,
+        { stateTreeDepth, messageTreeDepth },
+        quadVoteTallyBatchSize,
+        messageBatchSize,
+        voteOptionsMaxLeafIndex,
         signUpGatekeeperAddress,
         batchUstVerifierContract.contractAddress,
         quadVoteTallyVerifierContract.contractAddress,
-        config.maci.signUpDurationInSeconds.toString(),
-        config.maci.votingDurationInSeconds.toString(),
+        signUpDurationInSeconds,
+        votingDurationInSeconds,
         initialVoiceCreditProxy,
         {
             x: coordinatorPublicKey[0].toString(),
