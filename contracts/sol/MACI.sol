@@ -60,8 +60,13 @@ contract MACI is Ownable, DomainObjs {
 
     // Cached results of 2 ** depth - 1 where depth is the state tree depth and
     // message tree depth
-    uint256 internal stateTreeMaxLeafIndex;
     uint256 internal messageTreeMaxLeafIndex;
+
+    // The maximum number of signups allowed
+    uint256 internal maxSignUps;
+
+    // The maximum number of messages allowed
+    uint256 internal maxMessages;
 
     // When the contract was deployed. We assume that the signup period starts
     // immediately upon deployment.
@@ -83,6 +88,7 @@ contract MACI is Ownable, DomainObjs {
     PubKey public coordinatorPubKey;
 
     uint256 public numSignUps = 0;
+    uint256 public numMessages = 0;
 
     // Events
     event SignUp(PubKey indexed _userPubKey, uint256 indexed _stateIndex);
@@ -99,11 +105,21 @@ contract MACI is Ownable, DomainObjs {
         uint8 messageTreeDepth;
     }
 
+    struct BatchSizes {
+        uint8 stateLeafBatchSize;
+        uint8 messageBatchSize;
+    }
+
+    struct MaxValues {
+        uint256 maxSignUps;
+        uint256 maxMessages;
+        uint256 maxVoteOptions;
+    }
+
     constructor(
         TreeDepths memory _treeDepths,
-        uint8 _stateLeafBatchSize,
-        uint8 _messageBatchSize,
-        uint8 _voteOptionsMaxLeafIndex,
+        BatchSizes memory _batchSizes,
+        MaxValues memory _maxValues,
         SignUpGatekeeper _signUpGatekeeper,
         BatchUpdateStateTreeVerifier _batchUstVerifier,
         QuadVoteTallyVerifier _qvtVerifier,
@@ -113,8 +129,8 @@ contract MACI is Ownable, DomainObjs {
         PubKey memory _coordinatorPubKey
     ) Ownable() public {
 
-        stateLeafBatchSize = _stateLeafBatchSize;
-        messageBatchSize = _messageBatchSize;
+        stateLeafBatchSize = _batchSizes.stateLeafBatchSize;
+        messageBatchSize = _batchSizes.messageBatchSize;
 
         // Set the verifier contracts
         batchUstVerifier = _batchUstVerifier;
@@ -134,21 +150,31 @@ contract MACI is Ownable, DomainObjs {
         // Set the coordinator's public key
         coordinatorPubKey = _coordinatorPubKey;
 
+        // Calculate and cache the max number of leaves for each tree.
+        // They are used as public inputs to the batch update state tree snark.
+        messageTreeMaxLeafIndex = uint256(2) ** _treeDepths.messageTreeDepth - 1;
+
+        // Check and store the maximum number of signups
+        // It is the user's responsibility to ensure that the state tree depth
+        // is just large enough and not more, or they will waste gas.
+        uint256 stateTreeMaxLeafIndex = uint256(2) ** _treeDepths.stateTreeDepth - 1;
+        require(_maxValues.maxSignUps <= stateTreeMaxLeafIndex, "MACI: invalid maxSignUps value");
+        maxSignUps = _maxValues.maxSignUps;
+
+        // The maximum number of messages
+        require(_maxValues.maxMessages <= messageTreeMaxLeafIndex, "MACI: invalid maxMessages value");
+        maxMessages = _maxValues.maxMessages;
+
+        // The maximum number of leaves, minus one, of meaningful vote options.
+        // This allows the snark to do a no-op if the user votes for an option
+        // which has no meaning attached to it
+        voteOptionsMaxLeafIndex = _maxValues.maxVoteOptions;
+
         uint256 h = hashedBlankStateLeaf();
 
         // Create the message tree and state tree
         messageTree = new IncrementalMerkleTree(_treeDepths.messageTreeDepth, ZERO_VALUE);
         stateTree = new IncrementalMerkleTree(_treeDepths.stateTreeDepth, h);
-
-        // The maximum number of leaves, minus one, of meaningful vote options.
-        // This allows the snark to do a no-op if the user votes for an option
-        // which has no meaning attached to it
-        voteOptionsMaxLeafIndex = _voteOptionsMaxLeafIndex;
-
-        // Calculate and cache the max number of leaves for each tree.
-        // They are used as public inputs to the batch update state tree snark.
-        messageTreeMaxLeafIndex = uint256(2) ** _treeDepths.messageTreeDepth - 1;
-        stateTreeMaxLeafIndex = uint256(2) ** _treeDepths.stateTreeDepth - 1;
 
         // Make subsequent insertions start from leaf #1, as leaf #0 is only
         // updated with random data if a command is invalid.
@@ -224,6 +250,8 @@ contract MACI is Ownable, DomainObjs {
     isBeforeSignUpDeadline
     public {
 
+        require(numSignUps < maxSignUps, "MACI: maximum number of signups reached");
+
         // Register the user via the sign-up gatekeeper. This function should
         // throw if the user has already registered or if ineligible to do so.
         signUpGatekeeper.register(msg.sender, _signUpGatekeeperData);
@@ -268,6 +296,9 @@ contract MACI is Ownable, DomainObjs {
     isAfterSignUpDeadline
     isBeforeVotingDeadline
     public {
+
+        require(numMessages < maxMessages, "MACI: message limit reached");
+
         require(numSignUps > 0, "MACI: nobody signed up");
 
         // When this function is called for the first time, set
@@ -290,6 +321,8 @@ contract MACI is Ownable, DomainObjs {
 
         // Insert the new leaf into the message tree
         messageTree.insertLeaf(leaf);
+
+        numMessages ++;
 
         emit PublishMessage(_message, _encPubKey);
     }

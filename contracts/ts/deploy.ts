@@ -6,6 +6,7 @@ import * as path from 'path'
 import * as etherlime from 'etherlime-lib'
 import { config } from 'maci-config'
 import { genPubKey, bigInt } from 'maci-crypto'
+import { PubKey } from 'maci-domainobjs'
 import { genAccounts, genTestAccounts } from './accounts'
 const MiMC = require('@maci-contracts/compiled/MiMC.json')
 const Hasher = require('@maci-contracts/compiled/Hasher.json')
@@ -26,6 +27,17 @@ const genProvider = () => {
     return provider
 }
 
+const genJsonRpcDeployer = (
+    privateKey: string,
+    url: string,
+) => {
+
+    return new etherlime.JSONRPCPrivateKeyDeployer(
+        privateKey,
+        url,
+    )
+}
+
 const genDeployer = (
     privateKey: string,
 ) => {
@@ -38,8 +50,12 @@ const genDeployer = (
     )
 }
 
-const deployConstantInitialVoiceCreditProxy = async (deployer, amount: number) => {
-    console.log('Deploying InitialVoiceCreditProxy')
+const deployConstantInitialVoiceCreditProxy = async (
+    deployer,
+    amount: number,
+    quiet: boolean = false
+) => {
+    log('Deploying InitialVoiceCreditProxy', quiet)
     return await deployer.deploy(ConstantInitialVoiceCreditProxy, {}, amount)
 }
 
@@ -51,8 +67,9 @@ const deploySignupToken = async (deployer) => {
 const deploySignupTokenGatekeeper = async (
     deployer,
     signUpTokenAddress: string,
+    quiet: boolean = false
 ) => {
-    console.log('Deploying SignUpTokenGatekeeper')
+    log('Deploying SignUpTokenGatekeeper', quiet)
     const signUpTokenGatekeeperContract = await deployer.deploy(
         SignUpTokenGatekeeper,
         {},
@@ -64,12 +81,19 @@ const deploySignupTokenGatekeeper = async (
 
 const deployFreeForAllSignUpGatekeeper = async (
     deployer,
+    quiet: boolean = false
 ) => {
-    console.log('Deploying FreeForAllSignUpGatekeeper')
+    log('Deploying FreeForAllSignUpGatekeeper', quiet)
     return await deployer.deploy(
         FreeForAllSignUpGatekeeper,
         {},
     )
+}
+
+const log = (msg: string, quiet: boolean) => {
+    if (!quiet) {
+        console.log(msg)
+    }
 }
 
 const deployMaci = async (
@@ -83,24 +107,42 @@ const deployMaci = async (
     voteOptionsMaxLeafIndex: number = config.maci.voteOptionsMaxLeafIndex,
     signUpDurationInSeconds: number = config.maci.signUpDurationInSeconds,
     votingDurationInSeconds: number = config.maci.votingDurationInSeconds,
+    coordinatorPubKey?: PubKey,
+    quiet: boolean = false,
 ) => {
-    console.log('Deploying MiMC')
+    log('Deploying MiMC', quiet)
+
+    if (!coordinatorPubKey) {
+        const p = genPubKey(bigInt(config.maci.coordinatorPrivKey))
+        coordinatorPubKey = new PubKey(p)
+    }
+
     const mimcContract = await deployer.deploy(MiMC, {})
 
-    console.log('Deploying BatchUpdateStateTreeVerifier')
+    log('Deploying BatchUpdateStateTreeVerifier', quiet)
     const batchUstVerifierContract = await deployer.deploy(BatchUpdateStateTreeVerifier, {})
 
-    console.log('Deploying QuadVoteTallyVerifier')
+    log('Deploying QuadVoteTallyVerifier', quiet)
     const quadVoteTallyVerifierContract = await deployer.deploy(QuadVoteTallyVerifier, {})
 
-    console.log('Deploying MACI')
+    log('Deploying MACI', quiet)
+
+    const maxSignUps = (bigInt(2).pow(bigInt(stateTreeDepth)) - bigInt(1)).toString()
+    const maxMessages = (bigInt(2).pow(bigInt(messageTreeDepth)) - bigInt(1)).toString()
+
     const maciContract = await deployer.deploy(
         MACI,
         { MiMC: mimcContract.contractAddress },
         { stateTreeDepth, messageTreeDepth },
-        quadVoteTallyBatchSize,
-        messageBatchSize,
-        voteOptionsMaxLeafIndex,
+        {
+            stateLeafBatchSize: quadVoteTallyBatchSize,
+            messageBatchSize: messageBatchSize,
+        },
+        {
+            maxSignUps,
+            maxMessages,
+            maxVoteOptions: voteOptionsMaxLeafIndex,
+        },
         signUpGatekeeperAddress,
         batchUstVerifierContract.contractAddress,
         quadVoteTallyVerifierContract.contractAddress,
@@ -108,8 +150,8 @@ const deployMaci = async (
         votingDurationInSeconds,
         initialVoiceCreditProxy,
         {
-            x: coordinatorPublicKey[0].toString(),
-            y: coordinatorPublicKey[1].toString(),
+            x: coordinatorPubKey.rawPubKey[0].toString(),
+            y: coordinatorPubKey.rawPubKey[1].toString(),
         },
     )
 
@@ -235,4 +277,5 @@ export {
     deployFreeForAllSignUpGatekeeper,
     genDeployer,
     genProvider,
+    genJsonRpcDeployer,
 }

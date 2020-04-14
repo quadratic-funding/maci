@@ -15,7 +15,6 @@ describe('genMaciPubkey CLI subcommand', () => {
 
         const sk = lines[0].split(' ')[2]
         const pk = lines[1].split(' ')[3]
-        debugger
 
         const command2 = 'node ../cli/build/index.js genMaciPubkey -sk ' + sk
         const output2 = exec(command2).stdout.trim()

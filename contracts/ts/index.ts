@@ -1,5 +1,6 @@
 import {
     genDeployer,
+    genJsonRpcDeployer,
     deployMaci,
     deploySignupToken,
     deploySignupTokenGatekeeper,
@@ -12,6 +13,7 @@ import { timeTravel } from '../node_modules/etherlime/cli-commands/etherlime-tes
 export {
     timeTravel,
     genDeployer,
+    genJsonRpcDeployer,
     genAccounts,
     genTestAccounts,
     deployMaci,

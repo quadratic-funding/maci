@@ -29,7 +29,6 @@ describe('genMaciKeypair CLI subcommand', () => {
         const pk2 = genPubKey(sk.rawPrivKey)
         expect(pk.rawPubKey[0].toString()).toEqual(pk2[0].toString())
         expect(pk.rawPubKey[1].toString()).toEqual(pk2[1].toString())
-        debugger
     })
 
     it('genMaciKeypair with -p should output a deterministic private key and public key', async () => {

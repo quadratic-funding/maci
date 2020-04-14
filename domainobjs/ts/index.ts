@@ -20,6 +20,7 @@ import {
     genEcdhSharedKey,
     packPubKey,
     unpackPubKey,
+    SNARK_FIELD_SIZE
 } from 'maci-crypto'
 
 interface Keypair {
@@ -75,7 +76,7 @@ class Keypair implements Keypair {
         return equalPrivKey
     }
 }
-
+const SERIALIZED_PRIV_KEY_PREFIX = 'macisk.'
 class PrivKey {
     public rawPrivKey: RawPrivKey
 
@@ -92,15 +93,30 @@ class PrivKey {
     }
 
     public serialize = (): string => {
-        const prefix: string = 'macisk.'
-        return prefix + this.rawPrivKey.toString(16)
+        return SERIALIZED_PRIV_KEY_PREFIX + this.rawPrivKey.toString(16)
     }
 
     public static unserialize = (s: string): PrivKey => {
-        const x = s.slice(7)
+        const x = s.slice(SERIALIZED_PRIV_KEY_PREFIX.length)
         return new PrivKey(bigInt('0x' + x))
     }
+
+    public static isValidSerializedPrivKey = (s: string): boolean => {
+        const correctPrefix = s.startsWith(SERIALIZED_PRIV_KEY_PREFIX)
+        const x = s.slice(SERIALIZED_PRIV_KEY_PREFIX.length)
+
+        let validValue = false
+        try {
+            const value = bigInt('0x' + x)
+            validValue = value < SNARK_FIELD_SIZE
+        } catch {
+        }
+
+        return correctPrefix && validValue
+    }
 }
+
+const SERIALIZED_PUB_KEY_PREFIX = 'macipk.'
 
 class PubKey {
     public rawPubKey: RawPubKey
@@ -137,13 +153,13 @@ class PubKey {
     }
 
     public serialize = (): string => {
-        const prefix: string = 'macipk.'
         const packed = packPubKey(this.rawPubKey).toString('hex')
-        return prefix + packed.toString(16)
+        return SERIALIZED_PUB_KEY_PREFIX + packed.toString(16)
     }
 
     public static unserialize = (s: string): PubKey => {
-        const packed = Buffer.from(s.slice(7), 'hex')
+        const len = SERIALIZED_PUB_KEY_PREFIX.length
+        const packed = Buffer.from(s.slice(len), 'hex')
         return new PubKey(unpackPubKey(packed))
     }
 }
