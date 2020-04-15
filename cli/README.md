@@ -117,7 +117,7 @@ The output of this command is a serialised public key derived from the given pri
 
 `maci-cli signup <options>`
 
-Fields that the coordinator has to set:
+Fields that the user has to set:
 
 | Option | Flags | About |
 |-|-|-|
@@ -126,10 +126,14 @@ Fields that the coordinator has to set:
 | The user's MACI public key | `-p` or `--pubkey` | This should not be an Ethereum public key. Instead, it should be the user's serialised BabyJub public key (where the x and y values have been concatenated. |
 | User's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to sign up |
 | Prompt for the user's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input their Ethereum private key |
+| Signup gatekeeper proxy data | `-s` or `--sg-data` | A hex string to pass to the sign-up gatekeeper proxy contract which may use it to determine whether to allow the user to sign up. Default: an empty bytestring. |
+| Initial voice credit proxy data | `-v` or `--ivcp-data` | A hex string to pass to the initial voice credit proxy contract which may use it to determine how many voice credits to assign to the user. Default: an empty bytestring. |
 
 ### User: Change key / vote
 
 `maci-cli publish <options>`
+
+Fields that the user has to set:
 
 | Option | Flags | About |
 |-|-|-|

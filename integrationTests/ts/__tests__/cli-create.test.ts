@@ -38,7 +38,7 @@ describe('create CLI subcommand', () => {
         const maxUsers = 2 ** 4 - 1
         const maxMessages = 2 ** 4 - 1
         const maxVoteOptions = 15
-        const signupDuration = 1
+        const signupDuration = 600
         const votingDuration = 1
         const messageBatchSize = 4
         const tallyBatchSize = 4
@@ -56,8 +56,10 @@ describe('create CLI subcommand', () => {
             ` -bv ${tallyBatchSize}` +
             ` -c ${initialVoiceCredits}`
         
-        console.log(command)
         const output = exec(command).stdout.trim()
+
+        console.log(command)
+        console.log(output)
 
         const regMatch = output.match(/^MACI: (0x[a-fA-F0-9]{40})$/)
         const maciAddress = regMatch[1]

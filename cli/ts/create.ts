@@ -18,9 +18,12 @@ import {
 
 import {
     promptPwd,
+    checkEthSk,
     calcTreeDepthFromMaxLeaves,
+    checkDeployerProviderConnection,
 } from './utils'
 
+// TODO: set these in maci-config
 const DEFAULT_ETH_PROVIDER = 'http://localhost:8545'
 const DEFAULT_MAX_USERS = 15
 const DEFAULT_MAX_MESSAGES = 15
@@ -205,9 +208,7 @@ const create = async (args: any) => {
         deployerPrivkey = deployerPrivkey.slice(2)
     }
 
-    try {
-        new ethers.Wallet(deployerPrivkey)
-    } catch {
+    if (!checkEthSk(deployerPrivkey)) {
         console.error('Error: invalid Ethereum private key')
         return
     }
@@ -270,13 +271,11 @@ const create = async (args: any) => {
     // Ethereum provider
     const ethProvider = args.eth_provider ? args.eth_provider : DEFAULT_ETH_PROVIDER
 
-    const deployer = genJsonRpcDeployer(deployerPrivkey, ethProvider)
-    try {
-        await deployer.provider.getBlockNumber()
-    } catch {
+    if (! (await checkDeployerProviderConnection(deployerPrivkey, ethProvider))) {
         console.error('Error: unable to connect to the Ethereum provider at', ethProvider)
         return
     }
+    const deployer = genJsonRpcDeployer(deployerPrivkey, ethProvider)
 
     let initialVoiceCreditProxyContractAddress: string = ''
     if (initialVoiceCreditProxy == undefined) {

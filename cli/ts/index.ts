@@ -15,6 +15,11 @@ import {
     configureSubparser as configureSubparserForCreate,
 } from './create'
 
+import {
+    signup,
+    configureSubparser as configureSubparserForSignup,
+} from './signUp'
+
 const main = async () => {
     const parser = new argparse.ArgumentParser({ 
         description: 'Minimal Anti-Collusion Infrastructure',
@@ -34,6 +39,9 @@ const main = async () => {
     // Subcommand: create
     configureSubparserForCreate(subparsers)
 
+    // Subcommand: signup
+    configureSubparserForSignup(subparsers)
+
     const args = parser.parseArgs()
 
     // Execute the subcommand method
@@ -43,6 +51,8 @@ const main = async () => {
         await genMaciPubkey(args)
     } else if (args.subcommand === 'create') {
         await create(args)
+    } else if (args.subcommand === 'signup') {
+        await signup(args)
     }
 }
 
