@@ -9,6 +9,22 @@ import {
     genPubKey,
 } from 'maci-crypto'
 
+const configureSubparser = (subparsers: any) => {
+    const genMaciKeypairParser = subparsers.addParser(
+        'genMaciKeypair',
+        { addHelp: true },
+    )
+
+    genMaciKeypairParser.addArgument(
+        ['-p', '--passphrase'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'If a passphrase is specified, this command will apply a cryptographic key-stretching algorithm to it and produce a private key. The passphrase must be at least 32 characters long. If unspecified, this command will randomly generate a private key and its associated public key.',
+        }
+    )
+}
+
 const genMaciKeypair = async (args: any) => {
     const passphrase = args.passphrase
     if (passphrase && passphrase.length < 32) {
@@ -38,4 +54,7 @@ const genMaciKeypair = async (args: any) => {
     }
 }
 
-export { genMaciKeypair }
+export {
+    genMaciKeypair,
+    configureSubparser,
+}

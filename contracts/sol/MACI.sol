@@ -23,7 +23,7 @@ contract MACI is Ownable, DomainObjs {
 
     // The number of messages which the batch update state tree snark can
     // process per batch
-    uint8 internal messageBatchSize;
+    uint8 public messageBatchSize;
 
     // The current message batch index
     uint256 internal currentMessageBatchIndex;
@@ -32,7 +32,7 @@ contract MACI is Ownable, DomainObjs {
     uint8 internal currentStateLeafIndex;
 
     // The number of state leaves to tally per batch via the vote tally snark
-    uint8 internal stateLeafBatchSize;
+    uint8 public tallyBatchSize;
 
     IncrementalMerkleTree public messageTree;
 
@@ -53,7 +53,7 @@ contract MACI is Ownable, DomainObjs {
     // to 16 + 1 elements)
     uint256 internal currentResultsCommitment = 13168338010003725451955781056997656821184424038696131784497995360771729497580;
 
-    uint256 internal voteOptionsMaxLeafIndex;
+    uint256 public voteOptionsMaxLeafIndex;
 
     // The batch # for the quote tally function
     uint256 internal currentQvtBatchNum;
@@ -63,10 +63,10 @@ contract MACI is Ownable, DomainObjs {
     uint256 internal messageTreeMaxLeafIndex;
 
     // The maximum number of signups allowed
-    uint256 internal maxSignUps;
+    uint256 public maxUsers;
 
     // The maximum number of messages allowed
-    uint256 internal maxMessages;
+    uint256 public maxMessages;
 
     // When the contract was deployed. We assume that the signup period starts
     // immediately upon deployment.
@@ -106,12 +106,12 @@ contract MACI is Ownable, DomainObjs {
     }
 
     struct BatchSizes {
-        uint8 stateLeafBatchSize;
+        uint8 tallyBatchSize;
         uint8 messageBatchSize;
     }
 
     struct MaxValues {
-        uint256 maxSignUps;
+        uint256 maxUsers;
         uint256 maxMessages;
         uint256 maxVoteOptions;
     }
@@ -129,7 +129,7 @@ contract MACI is Ownable, DomainObjs {
         PubKey memory _coordinatorPubKey
     ) Ownable() public {
 
-        stateLeafBatchSize = _batchSizes.stateLeafBatchSize;
+        tallyBatchSize = _batchSizes.tallyBatchSize;
         messageBatchSize = _batchSizes.messageBatchSize;
 
         // Set the verifier contracts
@@ -158,8 +158,8 @@ contract MACI is Ownable, DomainObjs {
         // It is the user's responsibility to ensure that the state tree depth
         // is just large enough and not more, or they will waste gas.
         uint256 stateTreeMaxLeafIndex = uint256(2) ** _treeDepths.stateTreeDepth - 1;
-        require(_maxValues.maxSignUps <= stateTreeMaxLeafIndex, "MACI: invalid maxSignUps value");
-        maxSignUps = _maxValues.maxSignUps;
+        require(_maxValues.maxUsers <= stateTreeMaxLeafIndex, "MACI: invalid maxUsers value");
+        maxUsers = _maxValues.maxUsers;
 
         // The maximum number of messages
         require(_maxValues.maxMessages <= messageTreeMaxLeafIndex, "MACI: invalid maxMessages value");
@@ -250,7 +250,7 @@ contract MACI is Ownable, DomainObjs {
     isBeforeSignUpDeadline
     public {
 
-        require(numSignUps < maxSignUps, "MACI: maximum number of signups reached");
+        require(numSignUps < maxUsers, "MACI: maximum number of signups reached");
 
         // Register the user via the sign-up gatekeeper. This function should
         // throw if the user has already registered or if ineligible to do so.
@@ -503,7 +503,7 @@ contract MACI is Ownable, DomainObjs {
     public {
 
         require(numSignUps > 0, "MACI: nobody signed up");
-        uint256 totalBatches = 1 + (numSignUps / stateLeafBatchSize);
+        uint256 totalBatches = 1 + (numSignUps / tallyBatchSize);
 
         // Ensure that the batch # is within range
         require(

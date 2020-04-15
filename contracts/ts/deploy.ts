@@ -13,6 +13,7 @@ const Hasher = require('@maci-contracts/compiled/Hasher.json')
 const SignUpToken = require('@maci-contracts/compiled/SignUpToken.json')
 const SignUpTokenGatekeeper = require('@maci-contracts/compiled/SignUpTokenGatekeeper.json')
 const FreeForAllSignUpGatekeeper = require('@maci-contracts/compiled/FreeForAllGatekeeper.json')
+const InitialVoiceCreditProxy = require('@maci-contracts/compiled/InitialVoiceCreditProxy.json')
 const ConstantInitialVoiceCreditProxy = require('@maci-contracts/compiled/ConstantInitialVoiceCreditProxy.json')
 const BatchUpdateStateTreeVerifier = require('@maci-contracts/compiled/BatchUpdateStateTreeVerifier.json')
 const QuadVoteTallyVerifier = require('@maci-contracts/compiled/QuadVoteTallyVerifier.json')
@@ -20,11 +21,14 @@ const MACI = require('@maci-contracts/compiled/MACI.json')
 
 const coordinatorPublicKey = genPubKey(bigInt(config.maci.coordinatorPrivKey))
 
-const genProvider = () => {
-    const rpcUrl = config.get('chain.url')
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl)
+const maciContractAbi = MACI.abi
+const initialVoiceCreditProxyAbi = InitialVoiceCreditProxy.abi
 
-    return provider
+const genProvider = (
+    rpcUrl: string = config.get('chain.url'),
+) => {
+
+    return new ethers.providers.JsonRpcProvider(rpcUrl)
 }
 
 const genJsonRpcDeployer = (
@@ -127,7 +131,7 @@ const deployMaci = async (
 
     log('Deploying MACI', quiet)
 
-    const maxSignUps = (bigInt(2).pow(bigInt(stateTreeDepth)) - bigInt(1)).toString()
+    const maxUsers = (bigInt(2).pow(bigInt(stateTreeDepth)) - bigInt(1)).toString()
     const maxMessages = (bigInt(2).pow(bigInt(messageTreeDepth)) - bigInt(1)).toString()
 
     const maciContract = await deployer.deploy(
@@ -135,11 +139,11 @@ const deployMaci = async (
         { MiMC: mimcContract.contractAddress },
         { stateTreeDepth, messageTreeDepth },
         {
-            stateLeafBatchSize: quadVoteTallyBatchSize,
+            tallyBatchSize: quadVoteTallyBatchSize,
             messageBatchSize: messageBatchSize,
         },
         {
-            maxSignUps,
+            maxUsers,
             maxMessages,
             maxVoteOptions: voteOptionsMaxLeafIndex,
         },
@@ -278,4 +282,6 @@ export {
     genDeployer,
     genProvider,
     genJsonRpcDeployer,
+    maciContractAbi,
+    initialVoiceCreditProxyAbi,
 }

@@ -16,7 +16,10 @@ import {
     genPubKey,
 } from 'maci-crypto'
 
-import { promptPwd } from './utils'
+import {
+    promptPwd,
+    calcTreeDepthFromMaxLeaves,
+} from './utils'
 
 const DEFAULT_ETH_PROVIDER = 'http://localhost:8545'
 const DEFAULT_MAX_USERS = 15
@@ -29,8 +32,161 @@ const DEFAULT_VOTE_OPTION_LABEL_FILE = './voteOptionLabels.txt'
 const DEFAULT_MESSAGE_BATCH_SIZE = 4
 const DEFAULT_TALLY_BATCH_SIZE = 4
 
-const calcTreeDepthFromMaxLeaves = (maxLeaves: number) => {
-    return Math.ceil(Math.log(maxLeaves) / Math.log(2))
+const configureSubparser = (subparsers: any) => {
+    const createParser = subparsers.addParser(
+        'create',
+        { addHelp: true },
+    )
+
+    const deployerPrivkeyGroup = createParser.addMutuallyExclusiveGroup({ required: true })
+
+    deployerPrivkeyGroup.addArgument(
+        ['-dp', '--prompt-for-deployer-privkey'],
+        {
+            action: 'storeTrue',
+            help: 'Whether to prompt for the deployer\'s Ethereum private key and ignore -d / --deployer-privkey',
+        }
+    )
+
+    deployerPrivkeyGroup.addArgument(
+        ['-d', '--deployer-privkey'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'The deployer\'s Ethereum private key',
+        }
+    )
+
+
+    const coordinatorPrivkeyGroup = createParser.addMutuallyExclusiveGroup({ required: true })
+
+    coordinatorPrivkeyGroup.addArgument(
+        ['-dsk', '--prompt-for-maci-privkey'],
+        {
+            action: 'storeTrue',
+            help: 'Whether to prompt for the coordinator\'s serialized MACI private key',
+        }
+    )
+
+    coordinatorPrivkeyGroup.addArgument(
+        ['-sk', '--privkey'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'The coordinator\'s serialized MACI private key',
+        }
+    )
+
+    createParser.addArgument(
+        ['-e', '--eth-provider'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'A connection string to an Ethereum provider. Default: http://localhost:8545',
+        }
+    )
+
+    createParser.addArgument(
+        ['-u', '--max-users'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The maximum supported number of users. It must be one less than a power of 2. Default: 15',
+        }
+    )
+
+    createParser.addArgument(
+        ['-m', '--max-messages'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The maximum supported number of messages. It must be one less than a power of 2. Default: 15',
+        }
+    )
+
+    createParser.addArgument(
+        ['-v', '--max-vote-options'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The maximum supported number of vote options. It must be one less than a power of 2. Default: 15',
+        }
+    )
+
+    createParser.addArgument(
+        ['-s', '--signup-duration'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The sign-up duration in seconds. Default: 3600',
+        }
+    )
+
+    createParser.addArgument(
+        ['-o', '--voting-duration'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The voting duration in seconds. Default: 3600',
+        }
+    )
+
+    createParser.addArgument(
+        ['-bm', '--message-batch-size'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The batch size for processing messages',
+        }
+    )
+
+    createParser.addArgument(
+        ['-bv', '--tally-batch-size'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'The batch size for tallying votes',
+        }
+    )
+
+    const vcGroup = createParser.addMutuallyExclusiveGroup()
+
+    vcGroup.addArgument(
+        ['-c', '--initial-voice-credits'],
+        {
+            action: 'store',
+            type: 'int',
+            help: 'Each user\'s initial voice credits. Default: 100',
+        }
+    )
+
+    vcGroup.addArgument(
+        ['-i', '--initial-vc-proxy'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'If specified, deploys the MACI contract with this address as the initial voice credit proxy constructor argument. Otherwise, deploys a ConstantInitialVoiceCreditProxy contract with the above-specified value.',
+        }
+    )
+
+    createParser.addArgument(
+        ['-f', '--vote-option-label-file'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'A file with vote option labels (1 per line). Default: ./voteOptionLabels.txt',
+        }
+    )
+
+    createParser.addArgument(
+        ['-g', '--signup-gatekeeper'],
+        {
+            action: 'store',
+            type: 'string',
+            help: 'If specified, deploys the MACI contract with this address as the signup gatekeeper constructor argument. Otherwise, deploys a gatekeeper contract which allows any address to sign up.',
+        }
+    )
+
 }
 
 const create = async (args: any) => {
@@ -38,7 +194,6 @@ const create = async (args: any) => {
     // The deployer's Ethereum private key
     // The user may either enter it as a command-line option or via the
     // standard input
-    // TODO: support hardware wallets
     let deployerPrivkey
     if (args.prompt_for_deployer_privkey) {
         deployerPrivkey = await promptPwd('Deployer\'s Ethereum private key')
@@ -156,7 +311,7 @@ const create = async (args: any) => {
         messageTreeDepth,
         tallyBatchSize,
         messageBatchSize,
-        maxVoteOptions - 1,
+        maxVoteOptions,
         signupDuration,
         votingDuration,
         coordinatorKeypair.pubKey,
@@ -166,4 +321,7 @@ const create = async (args: any) => {
     console.log('MACI:', contracts.maciContract.contractAddress)
 }
 
-export { create }
+export {
+    create,
+    configureSubparser,
+}

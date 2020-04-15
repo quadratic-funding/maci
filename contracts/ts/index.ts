@@ -6,8 +6,12 @@ import {
     deploySignupTokenGatekeeper,
     deployConstantInitialVoiceCreditProxy,
     deployFreeForAllSignUpGatekeeper,
+    maciContractAbi,
+    initialVoiceCreditProxyAbi,
 } from './deploy'
+
 import { genAccounts, genTestAccounts } from './accounts'
+
 import { timeTravel } from '../node_modules/etherlime/cli-commands/etherlime-test/time-travel.js'
 
 export {
@@ -21,4 +25,6 @@ export {
     deploySignupTokenGatekeeper,
     deployFreeForAllSignUpGatekeeper,
     deployConstantInitialVoiceCreditProxy,
+    maciContractAbi,
+    initialVoiceCreditProxyAbi,
 }

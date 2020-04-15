@@ -9,6 +9,23 @@ import {
     genPubKey,
 } from 'maci-crypto'
 
+const configureSubparser = (subparsers: any) => {
+    const genMaciPubkeyParser = subparsers.addParser(
+        'genMaciPubkey',
+        { addHelp: true },
+    )
+
+    genMaciPubkeyParser.addArgument(
+        ['-sk', '--privkey'],
+        {
+            required: true,
+            action: 'store',
+            type: 'string',
+            help: 'This command will output the serialized public key associated with this serialized private key.',
+        }
+    )
+}
+
 const genMaciPubkey = async (args: any) => {
     const isValid = PrivKey.isValidSerializedPrivKey(args.privkey)
     if (!isValid) {
@@ -21,4 +38,7 @@ const genMaciPubkey = async (args: any) => {
     console.log(pubkey.serialize())
 }
 
-export { genMaciPubkey }
+export {
+    genMaciPubkey,
+    configureSubparser,
+}

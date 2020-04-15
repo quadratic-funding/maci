@@ -9,6 +9,13 @@ private keys. To that end, users should pass serialized formats of public and
 private keys to this CLI. We use `maci-domainobj`'s `PrivKey.serialize` and
 `PubKey.serialize` functions to do so. 
 
+Examples of serialized public and private keys:
+
+```
+Private key: macisk.e11e7e8870b6b3472e04a1ed703306ffbc9fd4ae78eff0c8b6cb552d467ef3f
+Public key:  macipk.483e37f5f4a11713d1a9c9df79fc7195f0e1e303e1d3bb823822e1930e1b2aa7
+```
+
 ## User stories
 
 | Role | Action |
@@ -45,7 +52,7 @@ MACI: 0xE28158eCFde143e2536761c3254C7C31efd97271
 | Coordinator's MACI private key | `-sk` or `--privkey` | A serialized MACI private key. This is *not* an Ethereum private key. Its big-endian value must be below the snark field size. |
 | Prompt for the coordinator's MACI private key | `-dsk` or `--prompt-for-maci-privkey` | If specified, ignores `-sk / --privkey` and prompts the user to input the coordinator's MACI private key |
 | Deployer's Ethereum private key | `-d` or `--deployer-privkey` | A private key of the Ethereum account to use to deploy the MACI contract |
-| Prompt for the deployer's Ethereum private key | `-dp` or `--prompt-for-deployer-privkey` | If specified, ignores `-d/ --deployer-privkey` and prompts the user to input the deployer's Ethereum private key |
+| Prompt for the deployer's Ethereum private key | `-dp` or `--prompt-for-deployer-privkey` | If specified, ignores `-d / --deployer-privkey` and prompts the user to input the deployer's Ethereum private key |
 | Maximum number of users | `-u` or `--max-users` | Default: 15 |
 | Maximum number of messages | `-m` or `--max-messages` | Default: 15 |
 | Maximum number of vote options | `-v` or `--max-vote-options` | Default: 3 |
@@ -75,6 +82,8 @@ Fields that the coordinator has to set:
 | Ethereum provider | `-e` or `--eth-provider` | A connection string to the Ethereum provider. Default: `http://localhost:8545` |
 | MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
 | Coordinator's MACI private key | `-sk` or `--privkey` | See above |
+| Coordinator's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to perform the transaction |
+| Prompt for the coordinator's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input the coordinator's Ethereum private key |
 
 As message processing and vote tallying occurs in batches, this command should
 automatically resume a job halfway done.
@@ -115,6 +124,8 @@ Fields that the coordinator has to set:
 | Ethereum provider | `-e` or `--eth-provider` | A connection string to the Ethereum provider. Default: `http://localhost:8545` |
 | MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
 | The user's MACI public key | `-p` or `--pubkey` | This should not be an Ethereum public key. Instead, it should be the user's serialised BabyJub public key (where the x and y values have been concatenated. |
+| User's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to sign up |
+| Prompt for the user's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input their Ethereum private key |
 
 ### User: Change key / vote
 
@@ -125,6 +136,8 @@ Fields that the coordinator has to set:
 | Ethereum provider | `-e` or `--eth-provider` | A connection string to the Ethereum provider. Default: `http://localhost:8545` |
 | MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
 | The user's MACI private key | `-sk` or `--pubkey` | This should not be an Ethereum private key |
+| User's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to perform the transaction |
+| Prompt for the user's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input their Ethereum private key |
 | State index | `-i` or `--state-index` | The state index of the user |
 | The user's new or current MACI public key | `-p` or `--pubkey` | This should be a serialised BabyJub public key |
 | Vote option index | `-v` or `--vote-option-index` | The index of the option to vote for |
