@@ -20,6 +20,11 @@ import {
     configureSubparser as configureSubparserForSignup,
 } from './signUp'
 
+import {
+    publish,
+    configureSubparser as configureSubparserForPublish,
+} from './publish'
+
 const main = async () => {
     const parser = new argparse.ArgumentParser({ 
         description: 'Minimal Anti-Collusion Infrastructure',
@@ -42,6 +47,9 @@ const main = async () => {
     // Subcommand: signup
     configureSubparserForSignup(subparsers)
 
+    // Subcommand: publish
+    configureSubparserForPublish(subparsers)
+
     const args = parser.parseArgs()
 
     // Execute the subcommand method
@@ -53,6 +61,8 @@ const main = async () => {
         await create(args)
     } else if (args.subcommand === 'signup') {
         await signup(args)
+    } else if (args.subcommand === 'publish') {
+        await publish(args)
     }
 }
 

@@ -4,4 +4,8 @@ const exec = (command: string) => {
     return shell.exec(command, { silent: true })
 }
 
-export { exec }
+const delay = (ms: number): Promise<void> => {
+    return new Promise((resolve: Function) => setTimeout(resolve, ms))
+}
+
+export { exec, delay }

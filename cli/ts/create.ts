@@ -195,7 +195,7 @@ const configureSubparser = (subparsers: any) => {
 const create = async (args: any) => {
 
     // The deployer's Ethereum private key
-    // The user may either enter it as a command-line option or via the
+    // They may either enter it as a command-line option or via the
     // standard input
     let deployerPrivkey
     if (args.prompt_for_deployer_privkey) {
@@ -213,6 +213,9 @@ const create = async (args: any) => {
         return
     }
 
+    // The coordinator's MACI private key
+    // They may either enter it as a command-line option or via the
+    // standard input
     let coordinatorPrivkey
     if (args.prompt_for_maci_privkey) {
         coordinatorPrivkey = await promptPwd('Coordinator\'s MACI private key')

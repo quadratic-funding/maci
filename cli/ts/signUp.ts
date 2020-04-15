@@ -166,7 +166,6 @@ const signup = async (args: any) => {
             { gasLimit: 1000000 }
         )
 
-        console.log('Transaction hash:', tx.hash)
     } catch(e) {
         console.error('Error: the transaction failed')
         if (e.message) {
@@ -176,6 +175,10 @@ const signup = async (args: any) => {
     }
 
     const receipt = await tx.wait()
+    const iface = new ethers.utils.Interface(maciContract.interface.abi)
+    const index = iface.parseLog(receipt.logs[1]).values._stateIndex
+    console.log('Transaction hash:', tx.hash)
+    console.log('State index:', index.toString())
 }
 
 export {

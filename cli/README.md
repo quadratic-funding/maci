@@ -140,6 +140,7 @@ Fields that the user has to set:
 | Ethereum provider | `-e` or `--eth-provider` | A connection string to the Ethereum provider. Default: `http://localhost:8545` |
 | MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
 | The user's MACI private key | `-sk` or `--pubkey` | This should not be an Ethereum private key |
+| Prompt for the user's MACI private key | `-dsk` or `--prompt-for-maci-privkey` | If specified, ignores `-sk / --privkey` and prompts the user to input thier MACI private key |
 | User's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to perform the transaction |
 | Prompt for the user's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input their Ethereum private key |
 | State index | `-i` or `--state-index` | The state index of the user |
