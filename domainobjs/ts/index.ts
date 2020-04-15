@@ -123,6 +123,8 @@ class PubKey {
 
     constructor (rawPubKey: RawPubKey) {
         assert(rawPubKey.length === 2)
+        assert(rawPubKey[0] < SNARK_FIELD_SIZE)
+        assert(rawPubKey[1] < SNARK_FIELD_SIZE)
         this.rawPubKey = rawPubKey
     }
 
@@ -161,6 +163,19 @@ class PubKey {
         const len = SERIALIZED_PUB_KEY_PREFIX.length
         const packed = Buffer.from(s.slice(len), 'hex')
         return new PubKey(unpackPubKey(packed))
+    }
+
+    public static isValidSerializedPubKey = (s: string): boolean => {
+        const correctPrefix = s.startsWith(SERIALIZED_PUB_KEY_PREFIX)
+
+        let validValue = false
+        try {
+            const unserialized = PubKey.unserialize(s)
+            validValue = true
+        } catch {
+        }
+
+        return correctPrefix && validValue
     }
 }
 

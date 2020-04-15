@@ -259,6 +259,8 @@ const genPubKey = (privKey: PrivKey): PubKey => {
     // TODO: figure out how to check if pubKey is valid
 
     assert(pubKey.length === 2)
+    assert(pubKey[0] < SNARK_FIELD_SIZE)
+    assert(pubKey[1] < SNARK_FIELD_SIZE)
 
     return pubKey
 }

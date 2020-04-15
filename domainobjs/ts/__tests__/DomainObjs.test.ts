@@ -3,6 +3,7 @@ import {
     Message,
     Keypair,
     PrivKey,
+    PubKey,
 } from '../'
 
 import {
@@ -69,6 +70,23 @@ describe('Domain objects', () => {
 
             const c = PrivKey.unserialize(s)
             expect(sk1.rawPrivKey.toString()).toEqual(bigInt(c.rawPrivKey).toString())
+        })
+
+        it('PrivKey.isValidSerializedPrivKey() should work correctly', () => {
+            const k = new Keypair()
+            const s = k.privKey.serialize()
+
+            expect(PrivKey.isValidSerializedPrivKey(s)).toBeTruthy()
+            expect(PrivKey.isValidSerializedPrivKey(s.slice(1))).toBeFalsy()
+        })
+
+        it('PubKey.isValidSerializedPubKey() should work correctly', () => {
+            const k = new Keypair()
+            const s = k.pubKey.serialize()
+
+            expect(PubKey.isValidSerializedPubKey(s)).toBeTruthy()
+            expect(PubKey.isValidSerializedPubKey(s + 'ffffffffffffffffffffffffffffff')).toBeFalsy()
+            expect(PubKey.isValidSerializedPubKey(s.slice(1))).toBeFalsy()
         })
 
         it('PubKey.serialize() and unserialize() should work correctly', () => {
