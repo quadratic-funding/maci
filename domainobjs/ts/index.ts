@@ -76,7 +76,9 @@ class Keypair implements Keypair {
         return equalPrivKey
     }
 }
+
 const SERIALIZED_PRIV_KEY_PREFIX = 'macisk.'
+
 class PrivKey {
     public rawPrivKey: RawPrivKey
 
