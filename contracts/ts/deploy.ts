@@ -106,6 +106,7 @@ const deployMaci = async (
     initialVoiceCreditProxy: string,
     stateTreeDepth: number = config.maci.merkleTrees.stateTreeDepth,
     messageTreeDepth: number = config.maci.merkleTrees.messageTreeDepth,
+    voteOptionTreeDepth: number = config.maci.merkleTrees.voteOptionTreeDepth,
     quadVoteTallyBatchSize: number = config.maci.quadVoteTallyBatchSize,
     messageBatchSize: number = config.maci.messageBatchSize,
     voteOptionsMaxLeafIndex: number = config.maci.voteOptionsMaxLeafIndex,
@@ -137,7 +138,7 @@ const deployMaci = async (
     const maciContract = await deployer.deploy(
         MACI,
         { MiMC: mimcContract.contractAddress },
-        { stateTreeDepth, messageTreeDepth },
+        { stateTreeDepth, messageTreeDepth, voteOptionTreeDepth },
         {
             tallyBatchSize: quadVoteTallyBatchSize,
             messageBatchSize: messageBatchSize,

@@ -21,7 +21,9 @@ import {
 import { MaciState } from 'maci-core'
 
 import {
+    hash,
     bigInt,
+    SnarkBigInt,
     IncrementalMerkleTree,
     genEcdhSharedKey,
     NOTHING_UP_MY_SLEEVE,
@@ -43,11 +45,6 @@ const messageTreeDepth = config.maci.merkleTrees.messageTreeDepth
 const voteOptionTreeDepth = config.maci.merkleTrees.voteOptionTreeDepth
 const numVoteOptions = 2 ** voteOptionTreeDepth
 const intermediateStateTreeDepth = config.maci.merkleTrees.intermediateStateTreeDepth
-
-// Cache an empty vote option tree root
-const temp = new IncrementalMerkleTree(voteOptionTreeDepth, bigInt(0))
-
-const emptyVoteOptionTreeRoot = temp.root
 
 const coordinator = new Keypair(new PrivKey(bigInt(config.maci.coordinatorPrivKey)))
 const maciState = new MaciState(
@@ -140,8 +137,22 @@ describe('MACI', () => {
     })
 
     it('the emptyVoteOptionTreeRoot value should be correct', async () => {
+        const temp = new IncrementalMerkleTree(voteOptionTreeDepth, bigInt(0))
+        const emptyVoteOptionTreeRoot = temp.root
+
         const root = await maciContract.emptyVoteOptionTreeRoot()
         expect(emptyVoteOptionTreeRoot.toString()).toEqual(root.toString())
+    })
+
+    it('the currentResultsCommitment value should be correct', async () => {
+        const crc = await maciContract.currentResultsCommitment()
+        const a: SnarkBigInt = []
+        for (let i = 0; i < 2 ** voteOptionTreeDepth; i++) {
+            a.push(bigInt(0))
+        }
+        const expected = hash(a)
+
+        expect(crc.toString()).toEqual(expected.toString())
     })
 
     it('the stateTree root should be correct', async () => {

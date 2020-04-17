@@ -237,13 +237,14 @@ const create = async (args: any) => {
     // Max messages
     const maxMessages = args.max_messages ? args.max_messages : DEFAULT_MAX_MESSAGES
 
+    // Max vote options
+    const maxVoteOptions = args.max_vote_options ? args.max_vote_options : DEFAULT_MAX_VOTE_OPTIONS
+
     // Calculate the tree depths. e.g. if maxUsers is 1000, the tree depth
     // should be 10, as the closest next power of 2 is 1024 = 2 ** 1024
     const stateTreeDepth = calcTreeDepthFromMaxLeaves(maxUsers)
     const messageTreeDepth = calcTreeDepthFromMaxLeaves(maxMessages)
-
-    // Max vote options
-    const maxVoteOptions = args.max_vote_options ? args.max_vote_options : DEFAULT_MAX_VOTE_OPTIONS
+    const voteOptionTreeDepth = calcTreeDepthFromMaxLeaves(maxVoteOptions)
 
     // Signup duration
     const signupDuration = args.signup_duration ? args.signup_duration : DEFAULT_SIGNUP_DURATION
@@ -311,6 +312,7 @@ const create = async (args: any) => {
         initialVoiceCreditProxyContractAddress,
         stateTreeDepth,
         messageTreeDepth,
+        voteOptionTreeDepth,
         tallyBatchSize,
         messageBatchSize,
         maxVoteOptions,

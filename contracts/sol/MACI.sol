@@ -45,14 +45,15 @@ contract MACI is Ownable, DomainObjs {
     // signals.
     uint256 public postSignUpStateRoot;
 
-    // For now, we hardcode the root of a tree with 16 leaves each with the
-    // value of 0
-    uint256 public emptyVoteOptionTreeRoot = 18097266179879782427361438755277450939722755112152115227098348943187633376449;
+    // To store the Merkle root of a tree with 2 **
+    // _treeDepths.voteOptionTreeDepth leaves of value 0
+    uint256 public emptyVoteOptionTreeRoot;
 
-    // A commitment to a 0-salted list of 0-results (currently hardcoded
-    // to 16 + 1 elements)
-    uint256 internal currentResultsCommitment = 13168338010003725451955781056997656821184424038696131784497995360771729497580;
+    // To store the hash of an array of 2 ** _treeDepths.voteOptionTreeDepth
+    // zeros
+    uint256 public currentResultsCommitment;
 
+    // The maximum number of leaves, minus one, of meaningful vote options.
     uint256 public voteOptionsMaxLeafIndex;
 
     // The batch # for the quote tally function
@@ -103,6 +104,7 @@ contract MACI is Ownable, DomainObjs {
     struct TreeDepths {
         uint8 stateTreeDepth;
         uint8 messageTreeDepth;
+        uint8 voteOptionTreeDepth;
     }
 
     struct BatchSizes {
@@ -169,6 +171,11 @@ contract MACI is Ownable, DomainObjs {
         // This allows the snark to do a no-op if the user votes for an option
         // which has no meaning attached to it
         voteOptionsMaxLeafIndex = _maxValues.maxVoteOptions;
+
+        // Calculate and store the empty vote option tree root. This value must
+        // be set before we call hashedBlankStateLeaf() later
+        emptyVoteOptionTreeRoot = calcEmptyVoteOptionTreeRoot(_treeDepths.voteOptionTreeDepth);
+        currentResultsCommitment = hashZeros(2 ** uint256(_treeDepths.voteOptionTreeDepth));
 
         uint256 h = hashedBlankStateLeaf();
 
@@ -543,6 +550,18 @@ contract MACI is Ownable, DomainObjs {
 
         // Increment the batch #
         currentQvtBatchNum ++;
+    }
+
+    // TODO: optimise this as we don't need to create a new
+    // IncrementalMerkleTree just to calculate a root
+    function calcEmptyVoteOptionTreeRoot(uint8 _levels) public returns (uint256) {
+        IncrementalMerkleTree tree = new IncrementalMerkleTree(_levels, 0);
+        return tree.root();
+    }
+
+    function hashZeros(uint256 _numZeros) public pure returns (uint256) {
+        uint256[] memory zeros = new uint256[](_numZeros);
+        return hash(zeros);
     }
 
     function getMessageTreeRoot() public view returns (uint256) {
