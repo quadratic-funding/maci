@@ -105,6 +105,7 @@ const configureSubparser = (subparsers: any) => {
     parser.addArgument(
         ['-i', '--state-index'],
         {
+            required: true,
             action: 'store',
             type: 'int',
             help: 'The user\'s state index',
@@ -207,11 +208,6 @@ const publish = async (args: any) => {
 
     const userMaciPrivkey = PrivKey.unserialize(serializedPrivkey)
     const userKeypair = new Keypair(userMaciPrivkey)
-
-    if (! (await checkDeployerProviderConnection(ethSk, ethProvider))) {
-        console.error('Error: unable to connect to the Ethereum provider at', ethProvider)
-        return
-    }
     
     // State index
     const stateIndex = bigInt(args.state_index)
@@ -220,7 +216,53 @@ const publish = async (args: any) => {
         return
     }
 
+    // Vote option index
+    const voteOptionIndex = bigInt(args.vote_option_index)
+
+    if (voteOptionIndex < 0) {
+        console.error('Error: the vote option index should be 0 or greater')
+        return
+    }
+
+    // The nonce
+    const nonce = bigInt(args.nonce)
+
+    if (nonce < 0) {
+        console.error('Error: the nonce should be 0 or greater')
+        return
+    }
+
+    // The salt
+    let salt
+    if (args.salt) {
+        if (!args.salt.match(/^0x[a-fA-F0-9]{64}$/)) {
+            console.error('Error: the salt should be a 32-byte hexadecimal string')
+            return
+        }
+
+        salt = bigInt(args.salt)
+
+        if (salt >= SNARK_FIELD_SIZE) {
+            console.error('Error: the salt should less than the BabyJub field size')
+            return
+        }
+    } else {
+        salt = DEFAULT_SALT
+    }
+
+    if (! (await checkDeployerProviderConnection(ethSk, ethProvider))) {
+        console.error('Error: unable to connect to the Ethereum provider at', ethProvider)
+        return
+    }
+
     const provider = new ethers.providers.JsonRpcProvider(ethProvider)
+
+    const code = await provider.getCode(maciAddress)
+    if (code.length === 2) {
+        console.error('Error: there is no contract deployed at the specified address')
+        return
+    }
+
     const wallet = new ethers.Wallet(ethSk, provider)
     const maciContract = new ethers.Contract(
         maciAddress,
@@ -228,17 +270,14 @@ const publish = async (args: any) => {
         wallet,
     )
 
-    // Validate the state index
+    // Validate the state index against the number of signups on-chain
     const numSignUps = (await maciContract.numSignUps()).toNumber()
     if (numSignUps < stateIndex) {
         console.error('Error: the state index is invalid')
         return
     }
 
-    // Vote option index
-    const voteOptionIndex = bigInt(args.vote_option_index)
-
-    // Validate the vote option index
+    // Validate the vote option index against the max leaf index on-chain
     const maxVoteOptions = (await maciContract.voteOptionsMaxLeafIndex()).toNumber()
     if (maxVoteOptions < voteOptionIndex) {
         console.error('Error: the vote option index is invalid')
@@ -247,32 +286,6 @@ const publish = async (args: any) => {
 
     // The new vote weight
     const newVoteWeight = bigInt(args.new_vote_weight)
-
-    // The nonce
-    const nonce = bigInt(args.nonce)
-
-    if (nonce > 0) {
-        console.error('Error: the nonce should be 0 or greater')
-        return
-    }
-
-    // The salt
-    let salt
-    if (args.salt) {
-        if (!args.salt.startsWith('0x') && !args.salt.match(/^0x[a-fA-F0-9]{64}$/)) {
-            console.error('Error: the salt should be a 32-byte hexadecimal string')
-            return
-        }
-
-        salt = bigInt(args.salt)
-
-        if (salt > SNARK_FIELD_SIZE) {
-            console.error('Error: the salt should less than the BabyJub field size')
-            return
-        }
-    } else {
-        salt = DEFAULT_SALT
-    }
 
     const coordinatorPubKeyOnChain = await maciContract.coordinatorPubKey()
     const coordinatorPubKey = new PubKey([

@@ -103,7 +103,7 @@ const configureSubparser = (subparsers: any) => {
 const signup = async (args: any) => {
     // User's MACI public key
     if (!PubKey.isValidSerializedPubKey(args.pubkey)) {
-        console.log('Error: invalid MACI public key')
+        console.error('Error: invalid MACI public key')
         return
     }
 
@@ -113,7 +113,7 @@ const signup = async (args: any) => {
     const regMatch = args.contract.match(/^0x[a-fA-F0-9]{40}$/)
 
     if (!regMatch) {
-        console.log('Error: invalid MACI contract address')
+        console.error('Error: invalid MACI contract address')
         return
     }
 
@@ -149,8 +149,27 @@ const signup = async (args: any) => {
     const sgData = args.sg_data ? args.sg_data : DEFAULT_SG_DATA
     const ivcpData = args.ivcp_data ? args.ivcp_data : DEFAULT_IVCP_DATA
 
+    const regex32ByteHex = /^0x[a-fA-F0-9]{64}$/
+
+    if (!sgData.match(regex32ByteHex)) {
+        console.error('Error: invalid signup gateway data')
+        return
+    }
+
+    if (!ivcpData.match(regex32ByteHex)) {
+        console.error('Error: invalid initial voice credit proxy data')
+        return
+    }
+
     const provider = new ethers.providers.JsonRpcProvider(ethProvider)
     const wallet = new ethers.Wallet(ethSk, provider)
+
+    const code = await provider.getCode(maciAddress)
+    if (code.length === 2) {
+        console.error('Error: there is no contract deployed at the specified address')
+        return
+    }
+
     const maciContract = new ethers.Contract(
         maciAddress,
         maciContractAbi,
@@ -161,8 +180,8 @@ const signup = async (args: any) => {
     try {
         tx = await maciContract.signUp(
             userMaciPubKey.asContractParam(),
-            ethers.utils.defaultAbiCoder.encode(['uint256'], [0]),
-            ethers.utils.defaultAbiCoder.encode(['uint256'], [0]),
+            sgData,
+            ivcpData,
             { gasLimit: 1000000 }
         )
 
