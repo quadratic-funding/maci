@@ -1,5 +1,20 @@
 # maci-cli
 
+## Subcommands
+
+| Role | Action | Subcommand |
+|-|-|-|
+| User | Generate MACI keypair | `genMaciKeypair` |
+| User | Generate MACI public key | `genMaciPubkey` |
+| Coordinator | Create election | `create `|
+| User | Sign up | `signup` |
+| User | Change key / vote | `publish` |
+| Coordinator | Process one batch of messages| `processBatch` |
+| Coordinator | Process all remaining batches of messages | `processAll` |
+| Coordinator | Tally one batch of state leaves | `tallyBatch` |
+| Coordinator | Tally all remaining batches of state leaves | `tallyAll` |
+| Coordinator | Prove final tally | `prove` |
+
 ## Public and private key format
 
 MACI uses private keys in the BabyJub field for operations which occur within
@@ -15,16 +30,6 @@ Examples of serialized public and private keys:
 Private key: macisk.e11e7e8870b6b3472e04a1ed703306ffbc9fd4ae78eff0c8b6cb552d467ef3f
 Public key:  macipk.483e37f5f4a11713d1a9c9df79fc7195f0e1e303e1d3bb823822e1930e1b2aa7
 ```
-
-## User stories
-
-| Role | Action |
-|-|-|
-| Coordinator | Create election |
-| Coordinator | Process, tally and prove outcome |
-| User | Generate MACI keypair |
-| User | Sign up |
-| User | Change key / vote |
 
 ### Coordinator: Create election
 
@@ -50,15 +55,14 @@ MACI: 0xE28158eCFde143e2536761c3254C7C31efd97271
 |-|-|-|
 | Ethereum provider | `-e` or `--eth-provider` | A connection string to an Ethereum provider. Default: `http://localhost:8545` |
 | Coordinator's MACI private key | `-sk` or `--privkey` | A serialized MACI private key. This is *not* an Ethereum private key. Its big-endian value must be below the snark field size. |
-| Prompt for the coordinator's MACI private key | `-dsk` or `--prompt-for-maci-privkey` | If specified, ignores `-sk / --privkey` and prompts the user to input the coordinator's MACI private key |
+| Prompt for the coordinator's MACI private key | `-dsk` or `--prompt-for-maci-privkey` | If specified, ignores `-sk / --privkey` and prompts the coordinator to input their MACI private key |
 | Deployer's Ethereum private key | `-d` or `--deployer-privkey` | A private key of the Ethereum account to use to deploy the MACI contract |
-| Prompt for the deployer's Ethereum private key | `-dp` or `--prompt-for-deployer-privkey` | If specified, ignores `-d / --deployer-privkey` and prompts the user to input the deployer's Ethereum private key |
+| Prompt for the deployer's Ethereum private key | `-dp` or `--prompt-for-deployer-privkey` | If specified, ignores `-d / --deployer-privkey` and prompts the coordinator to input their Ethereum private key |
 | Maximum number of users | `-u` or `--max-users` | Default: 15 |
 | Maximum number of messages | `-m` or `--max-messages` | Default: 15 |
 | Maximum number of vote options | `-v` or `--max-vote-options` | Default: 3 |
 | Sign-up duration | `-s` or `--signup-duration` | The sign-up duration, in seconds. Default: 3600. |
 | Voting duration | `-o` or `--voting-duration` | The voting duration, in seconds. Default: 3600. |
-| Vote option label file | `-f` or `--label-file` | Default: `./voteOptionLabels.txt` |
 | Initial voice credits | `-c` or `--initial-voice-credits` | Default: 100 |
 | Initial voice credit proxy contract | `-i` or `--initial-vc-proxy` | If specified, deploys the MACI contract with this address as the initial voice credit proxy constructor argument. Otherwise, deploys a ConstantInitialVoiceCreditProxy contract with the above-specified value. |
 | Signup gatekeeper contract | `-g` or `--signup-gatekeeper` | If specified, deploys the MACI contract with this address as the signup gatekeeper constructor argument. Otherwise, deploys a gatekeeper contract which allows any address to sign up. | 
@@ -83,7 +87,7 @@ Fields that the coordinator has to set:
 | MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
 | Coordinator's MACI private key | `-sk` or `--privkey` | See above |
 | Coordinator's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to perform the transaction |
-| Prompt for the coordinator's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the user to input the coordinator's Ethereum private key |
+| Prompt for the coordinator's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the coordinator to input their Ethereum private key |
 
 As message processing and vote tallying occurs in batches, this command should
 automatically resume a job halfway done.
@@ -149,3 +153,18 @@ Fields that the user has to set:
 | New vote weight | `-w` or `--new-vote-weight` | The vote weight to assign to said vote option |
 | Nonce | `-n` or `--nonce` | The nonce of the message |
 | Salt | `-s` or `--salt` | The salt of the message. If unspecified, this command will randomly generate a salt |
+
+### Coordinator: Process batch
+
+`maci-cli processBatch <options>`
+
+Fields that the coordinator has to set:
+
+| Option | Flags | About |
+|-|-|-|
+| Ethereum provider | `-e` or `--eth-provider` | A connection string to the Ethereum provider. Default: `http://localhost:8545` |
+| MACI contract address | `-x` or `--contract` | The address of the deployed MACI contract |
+| Coordinator's MACI private key | `-sk` or `--privkey` | A serialized MACI private key. This is *not* an Ethereum private key. Its big-endian value must be below the snark field size. |
+| Prompt for the coordinator's MACI private key | `-dsk` or `--prompt-for-maci-privkey` | If specified, ignores `-sk / --privkey` and prompts the user to input the coordinator's MACI private key |
+| Coordinator's Ethereum private key | `-d` or `--eth-privkey` | A private key of the Ethereum account to use to perform transactions |
+| Prompt for the coordinator's Ethereum private key | `-dp` or `--prompt-for-eth-privkey` | If specified, ignores `-d / --eth-privkey` and prompts the coordinator to input their Ethereum private key |

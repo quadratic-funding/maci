@@ -20,15 +20,22 @@ import {
 
 import {
     promptPwd,
-    checkEthSk,
+    validateEthSk,
+    validateEthAddress,
+    validateSaltSize,
+    validateSaltFormat,
+    contractExists,
     checkDeployerProviderConnection,
 } from './utils'
 
 import * as ethers from 'ethers'
 
-const DEFAULT_ETH_PROVIDER = 'http://localhost:8545'
-const DEFAULT_SG_DATA = ethers.utils.defaultAbiCoder.encode(['uint256'], [0])
-const DEFAULT_IVCP_DATA = ethers.utils.defaultAbiCoder.encode(['uint256'], [0])
+import {
+    DEFAULT_ETH_PROVIDER,
+    DEFAULT_SG_DATA,
+    DEFAULT_IVCP_DATA,
+} from './defaults'
+
 const DEFAULT_SALT = genRandomSalt()
 
 const configureSubparser = (subparsers: any) => {
@@ -162,9 +169,7 @@ const publish = async (args: any) => {
     const userMaciPubKey = PubKey.unserialize(args.pubkey)
 
     // MACI contract
-    const regMatch = args.contract.match(/^0x[a-fA-F0-9]{40}$/)
-
-    if (!regMatch) {
+    if (!validateEthAddress(args.contract)) {
         console.error('Error: invalid MACI contract address')
         return
     }
@@ -188,7 +193,7 @@ const publish = async (args: any) => {
         ethSk = ethSk.slice(2)
     }
 
-    if (!checkEthSk(ethSk)) {
+    if (!validateEthSk(ethSk)) {
         console.error('Error: invalid Ethereum private key')
         return
     }
@@ -235,14 +240,14 @@ const publish = async (args: any) => {
     // The salt
     let salt
     if (args.salt) {
-        if (!args.salt.match(/^0x[a-fA-F0-9]{64}$/)) {
+        if (!validateSaltFormat(args.salt)) {
             console.error('Error: the salt should be a 32-byte hexadecimal string')
             return
         }
 
         salt = bigInt(args.salt)
 
-        if (salt >= SNARK_FIELD_SIZE) {
+        if (!validateSaltSize(args.salt)) {
             console.error('Error: the salt should less than the BabyJub field size')
             return
         }
@@ -257,8 +262,7 @@ const publish = async (args: any) => {
 
     const provider = new ethers.providers.JsonRpcProvider(ethProvider)
 
-    const code = await provider.getCode(maciAddress)
-    if (code.length === 2) {
+    if (! (await contractExists(provider, maciAddress))) {
         console.error('Error: there is no contract deployed at the specified address')
         return
     }

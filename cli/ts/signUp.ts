@@ -19,15 +19,19 @@ import {
 
 import {
     promptPwd,
-    checkEthSk,
+    validateEthSk,
+    validateEthAddress,
     checkDeployerProviderConnection,
+    contractExists,
 } from './utils'
 
 import * as ethers from 'ethers'
 
-const DEFAULT_ETH_PROVIDER = 'http://localhost:8545'
-const DEFAULT_SG_DATA = ethers.utils.defaultAbiCoder.encode(['uint256'], [0])
-const DEFAULT_IVCP_DATA = ethers.utils.defaultAbiCoder.encode(['uint256'], [0])
+import {
+    DEFAULT_ETH_PROVIDER,
+    DEFAULT_SG_DATA,
+    DEFAULT_IVCP_DATA,
+} from './defaults'
 
 const configureSubparser = (subparsers: any) => {
     const parser = subparsers.addParser(
@@ -101,6 +105,7 @@ const configureSubparser = (subparsers: any) => {
 }
 
 const signup = async (args: any) => {
+
     // User's MACI public key
     if (!PubKey.isValidSerializedPubKey(args.pubkey)) {
         console.error('Error: invalid MACI public key')
@@ -110,9 +115,7 @@ const signup = async (args: any) => {
     const userMaciPubKey = PubKey.unserialize(args.pubkey)
 
     // MACI contract
-    const regMatch = args.contract.match(/^0x[a-fA-F0-9]{40}$/)
-
-    if (!regMatch) {
+    if (!validateEthAddress(args.contract)) {
         console.error('Error: invalid MACI contract address')
         return
     }
@@ -136,7 +139,7 @@ const signup = async (args: any) => {
         ethSk = ethSk.slice(2)
     }
 
-    if (!checkEthSk(ethSk)) {
+    if (!validateEthSk(ethSk)) {
         console.error('Error: invalid Ethereum private key')
         return
     }
@@ -164,8 +167,7 @@ const signup = async (args: any) => {
     const provider = new ethers.providers.JsonRpcProvider(ethProvider)
     const wallet = new ethers.Wallet(ethSk, provider)
 
-    const code = await provider.getCode(maciAddress)
-    if (code.length === 2) {
+    if (! await contractExists(provider, maciAddress)) {
         console.error('Error: there is no contract deployed at the specified address')
         return
     }

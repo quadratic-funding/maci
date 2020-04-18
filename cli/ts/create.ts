@@ -18,22 +18,22 @@ import {
 
 import {
     promptPwd,
-    checkEthSk,
+    validateEthSk,
     calcTreeDepthFromMaxLeaves,
     checkDeployerProviderConnection,
 } from './utils'
 
-// TODO: set these in maci-config
-const DEFAULT_ETH_PROVIDER = 'http://localhost:8545'
-const DEFAULT_MAX_USERS = 15
-const DEFAULT_MAX_MESSAGES = 15
-const DEFAULT_MAX_VOTE_OPTIONS = 3
-const DEFAULT_SIGNUP_DURATION = 3600
-const DEFAULT_VOTING_DURATION = 3600
-const DEFAULT_INITIAL_VOICE_CREDITS = 100
-const DEFAULT_VOTE_OPTION_LABEL_FILE = './voteOptionLabels.txt'
-const DEFAULT_MESSAGE_BATCH_SIZE = 4
-const DEFAULT_TALLY_BATCH_SIZE = 4
+import {
+    DEFAULT_ETH_PROVIDER,
+    DEFAULT_MAX_USERS,
+    DEFAULT_MAX_MESSAGES,
+    DEFAULT_MAX_VOTE_OPTIONS,
+    DEFAULT_SIGNUP_DURATION,
+    DEFAULT_VOTING_DURATION,
+    DEFAULT_INITIAL_VOICE_CREDITS,
+    DEFAULT_MESSAGE_BATCH_SIZE,
+    DEFAULT_TALLY_BATCH_SIZE,
+} from './defaults'
 
 const configureSubparser = (subparsers: any) => {
     const createParser = subparsers.addParser(
@@ -173,15 +173,6 @@ const configureSubparser = (subparsers: any) => {
     )
 
     createParser.addArgument(
-        ['-f', '--vote-option-label-file'],
-        {
-            action: 'store',
-            type: 'string',
-            help: 'A file with vote option labels (1 per line). Default: ./voteOptionLabels.txt',
-        }
-    )
-
-    createParser.addArgument(
         ['-g', '--signup-gatekeeper'],
         {
             action: 'store',
@@ -208,7 +199,7 @@ const create = async (args: any) => {
         deployerPrivkey = deployerPrivkey.slice(2)
     }
 
-    if (!checkEthSk(deployerPrivkey)) {
+    if (!validateEthSk(deployerPrivkey)) {
         console.error('Error: invalid Ethereum private key')
         return
     }
@@ -251,9 +242,6 @@ const create = async (args: any) => {
 
     // Voting duration
     const votingDuration = args.voting_duration ? args.voting_duration : DEFAULT_VOTING_DURATION
-
-    // Vote option label file
-    const voteOptionLabelFile = args.vote_option_label_file ? args.vote_option_label_file : DEFAULT_VOTE_OPTION_LABEL_FILE
 
     // Message batch size
     const messageBatchSize = args.message_batch_size ? args.message_batch_size : DEFAULT_MESSAGE_BATCH_SIZE

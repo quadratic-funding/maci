@@ -25,6 +25,11 @@ import {
     configureSubparser as configureSubparserForPublish,
 } from './publish'
 
+import {
+    processBatch,
+    configureSubparser as configureSubparserForProcessBatch,
+} from './processBatch'
+
 const main = async () => {
     const parser = new argparse.ArgumentParser({ 
         description: 'Minimal Anti-Collusion Infrastructure',
@@ -50,6 +55,9 @@ const main = async () => {
     // Subcommand: publish
     configureSubparserForPublish(subparsers)
 
+    // Subcommand: processBatch
+    configureSubparserForProcessBatch(subparsers)
+
     const args = parser.parseArgs()
 
     // Execute the subcommand method
@@ -63,6 +71,8 @@ const main = async () => {
         await signup(args)
     } else if (args.subcommand === 'publish') {
         await publish(args)
+    } else if (args.subcommand === 'processBatch') {
+        await processBatch(args)
     }
 }
 

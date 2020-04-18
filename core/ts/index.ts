@@ -1,3 +1,4 @@
+import * as ethers from 'ethers'
 import * as assert from 'assert'
 import {
     PrivKey,
@@ -54,6 +55,25 @@ class User {
             newVotesArr,
             bigInt(this.voiceCreditBalance.toString()),
             bigInt(this.nonce.toString()),
+        )
+    }
+
+    /*
+     * Generate a user which should match a blank state leaf
+     */
+    public static genBlankUser = (
+        _voteOptionTreeDepth: number,
+    ): User => {
+        let votes: SnarkBigInt[] = []
+        for (let i = 0; i < _voteOptionTreeDepth; i ++) {
+            votes.push(bigInt(0))
+        }
+
+        return new User(
+            new PubKey([0, 0]),
+            votes,
+            bigInt(0),
+            bigInt(0),
         )
     }
 
@@ -116,8 +136,7 @@ class MaciState {
         )
         this.emptyVoteOptionTreeRoot = emptyVoteOptionTree.root
 
-        this.zerothStateLeaf 
-            = StateLeaf.genBlankLeaf(this.emptyVoteOptionTreeRoot)
+        this.zerothStateLeaf = this.genBlankLeaf()
     }
 
     /*
@@ -138,16 +157,13 @@ class MaciState {
      * StateLeaf objects
      */
     public genStateTree = (): IncrementalMerkleTree => {
-        const blankStateLeaf = StateLeaf.genBlankLeaf(
-            this.emptyVoteOptionTreeRoot,
-        )
-
         const stateTree = new IncrementalMerkleTree(
             this.stateTreeDepth,
-            blankStateLeaf.hash(),
+            this.genBlankLeaf().hash()
         )
 
         stateTree.insert(this.zerothStateLeaf.hash())
+
         for (let user of this.users) {
             const stateLeaf = user.genStateLeaf(this.voteOptionTreeDepth)
             stateTree.insert(stateLeaf.hash())
@@ -311,6 +327,7 @@ class MaciState {
         _batchSize: number,
         _randomStateLeaf: StateLeaf,
     ) => {
+        // TODO: if _index + i overflows
         for (let i = 0; i < _batchSize; i++) {
             const messageIndex: number = _index + i;
             this.processMessage(messageIndex)
@@ -533,6 +550,10 @@ class MaciState {
         return results
     }
 
+    public genBlankLeaf = (): StateLeaf => {
+        return StateLeaf.genBlankLeaf(this.emptyVoteOptionTreeRoot)
+    }
+
     /*
      * Generates circuit inputs to the QuadVoteTally function.
      * @param _startIndex The index of the first state leaf in the tree
@@ -564,9 +585,7 @@ class MaciState {
             _currentResultsSalt
         ])
 
-        const blankStateLeaf = StateLeaf.genBlankLeaf(
-            this.emptyVoteOptionTreeRoot,
-        )
+        const blankStateLeaf = this.genBlankLeaf()
 
         const blankStateLeafHash = blankStateLeaf.hash()
         const batchTreeDepth = bigInt(Math.sqrt(_batchSize.toString()))

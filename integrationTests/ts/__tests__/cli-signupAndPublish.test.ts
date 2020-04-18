@@ -37,7 +37,9 @@ let maciAddress: string
 let maciState: MaciState
 let stateIndex: string
 const providerUrl = config.get('chain.url')
-const coordinatorKeypair = new Keypair()
+const coordinatorKeypair = new Keypair(
+    new PrivKey(bigInt('0xa'))
+)
 const userKeypair = new Keypair()
 const maciPrivkey = coordinatorKeypair.privKey.serialize()
 const deployerPrivKey = accounts[0].privateKey
@@ -94,6 +96,7 @@ describe('signup and publish CLI subcommands', () => {
             ` -bv ${tallyBatchSize}` +
             ` -c ${initialVoiceCredits}`
 
+        console.log(createCommand)
         const createOutput = exec(createCommand).stdout.trim()
 
         // Log the output for further manual testing
@@ -156,6 +159,21 @@ describe('signup and publish CLI subcommands', () => {
 
             const root = await maciContract.getStateTreeRoot()
             expect(root.toString()).toEqual(maciState.genStateRoot().toString())
+
+        })
+
+        it('should sign another user up', async () => {
+            const keypair = new Keypair()
+            const signupCommand = `node ../cli/build/index.js signup` +
+                ` -p ${keypair.pubKey.serialize()}` +
+                ` -d ${userPrivKey}` +
+                ` -x ${maciAddress}`
+            const signupOutput = exec(signupCommand).stdout.trim()
+            console.log(signupOutput)
+
+            // Check whether the transaction succeeded
+            const signupRegMatch = signupOutput.match(/^Transaction hash: (0x[a-fA-F0-9]{64})\nState index: (\d+)$/)
+            expect(signupRegMatch).toBeTruthy()
         })
 
         it('should reject a provider URL that does not work', async () => {

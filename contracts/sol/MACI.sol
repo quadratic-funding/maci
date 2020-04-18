@@ -26,7 +26,7 @@ contract MACI is Ownable, DomainObjs {
     uint8 public messageBatchSize;
 
     // The current message batch index
-    uint256 internal currentMessageBatchIndex;
+    uint256 public currentMessageBatchIndex;
 
     // The current state leaf batch index for the vote tally snark
     uint8 internal currentStateLeafIndex;
@@ -61,7 +61,7 @@ contract MACI is Ownable, DomainObjs {
 
     // Cached results of 2 ** depth - 1 where depth is the state tree depth and
     // message tree depth
-    uint256 internal messageTreeMaxLeafIndex;
+    uint256 public messageTreeMaxLeafIndex;
 
     // The maximum number of signups allowed
     uint256 public maxUsers;
@@ -91,8 +91,14 @@ contract MACI is Ownable, DomainObjs {
     uint256 public numSignUps = 0;
     uint256 public numMessages = 0;
 
+    TreeDepths public treeDepths;
+
     // Events
-    event SignUp(PubKey indexed _userPubKey, uint256 indexed _stateIndex);
+    event SignUp(
+        PubKey indexed _userPubKey,
+        uint256 indexed _stateIndex,
+        uint256 indexed _voiceCreditBalance
+    );
 
     event PublishMessage(
         Message indexed _message,
@@ -130,6 +136,8 @@ contract MACI is Ownable, DomainObjs {
         InitialVoiceCreditProxy _initialVoiceCreditProxy,
         PubKey memory _coordinatorPubKey
     ) Ownable() public {
+
+        treeDepths = _treeDepths;
 
         tallyBatchSize = _batchSizes.tallyBatchSize;
         messageBatchSize = _batchSizes.messageBatchSize;
@@ -284,7 +292,7 @@ contract MACI is Ownable, DomainObjs {
 
         // numSignUps is equal to the state index of the leaf which was just
         // added to the state tree above
-        emit SignUp(_userPubKey, numSignUps);
+        emit SignUp(_userPubKey, numSignUps, voiceCreditBalance);
     }
 
     /*
