@@ -376,19 +376,20 @@ contract MACI is Ownable, DomainObjs {
         uint256 _newStateRoot,
         uint256[] memory _stateTreeRoots,
         PubKey[] memory _ecdhPubKeys
-    ) public view returns (uint256[19] memory) {
-        uint256[19] memory publicSignals;
+    ) public view returns (uint256[20] memory) {
+        uint256[20] memory publicSignals;
         publicSignals[0] = _newStateRoot;
         publicSignals[1] = coordinatorPubKey.x;
         publicSignals[2] = coordinatorPubKey.y;
         publicSignals[3] = voteOptionsMaxLeafIndex;
         publicSignals[4] = messageTree.root();
         publicSignals[5] = currentMessageBatchIndex;
-        publicSignals[6] = numSignUps;
+        publicSignals[6] = currentMessageBatchIndex + (numMessages % messageBatchSize);
+        publicSignals[7] = numSignUps;
 
         for (uint8 i = 0; i < messageBatchSize; i++) {
-            uint8 x = 7 + i;
-            uint8 y = 7 + messageBatchSize + i * 2;
+            uint8 x = 8 + i;
+            uint8 y = 8 + messageBatchSize + i * 2;
             uint8 z = y + 1;
             publicSignals[x] = _stateTreeRoots[i];
             publicSignals[y] = _ecdhPubKeys[i].x;
@@ -435,7 +436,7 @@ contract MACI is Ownable, DomainObjs {
         );
 
         // Assemble the public inputs to the snark
-        uint256[19] memory publicSignals = genBatchUstPublicSignals(
+        uint256[20] memory publicSignals = genBatchUstPublicSignals(
             _newStateRoot,
             _stateTreeRoots,
             _ecdhPubKeys

@@ -7,18 +7,15 @@ include "./verify_signature.circom";
 
 include "../node_modules/circomlib/circuits/comparators.circom";
 include "../node_modules/circomlib/circuits/mux1.circom";
-include "../node_modules/circomlib/circuits/mux2.circom";
-
 
 template UpdateStateTree(
     state_tree_depth,
     message_tree_depth,
     vote_options_tree_depth
 ) {
-    // params:
-    //    state_tree_depth: the depth of the state tree
-    //    message_tree_depth: the depth of the message tree
-    //    vote_options_tree_depth: depth of the vote tree
+    // state_tree_depth: the depth of the state tree
+    // message_tree_depth: the depth of the message tree
+    // vote_options_tree_depth: depth of the vote tree
 
     // Indices for convenience
     var CMD_STATE_TREE_INDEX_IDX = 0;
@@ -97,20 +94,19 @@ template UpdateStateTree(
     signal private input ecdh_private_key;
     signal input ecdh_public_key[2];
 
-    var vote_options_max_leaves = 2 ** vote_options_tree_depth;
-    var state_tree_max_leaves = 2 ** state_tree_depth;
+    var vote_options_max_possible_leaves = 2 ** vote_options_tree_depth;
+    var state_tree_max_possible_leaves = 2 ** state_tree_depth;
 
     // Check 0: Make sure max indexes are valid
-    // We assume that there are no more than 255 possible candidates to vote for
-    component valid_vote_options_max_leaf_index = LessEqThan(8);
+    component valid_vote_options_max_leaf_index = LessEqThan(32);
     valid_vote_options_max_leaf_index.in[0] <== vote_options_max_leaf_index;
-    valid_vote_options_max_leaf_index.in[1] <== vote_options_max_leaves;
+    valid_vote_options_max_leaf_index.in[1] <== vote_options_max_possible_leaves;
     valid_vote_options_max_leaf_index.out === 1;
 
     // We assume that there are no more than 2.1 bil users registered
     component valid_state_tree_max_leaf_index = LessEqThan(32);
     valid_state_tree_max_leaf_index.in[0] <== state_tree_max_leaf_index;
-    valid_state_tree_max_leaf_index.in[1] <== state_tree_max_leaves;
+    valid_state_tree_max_leaf_index.in[1] <== state_tree_max_possible_leaves;
     valid_state_tree_max_leaf_index.out === 1;
 
     // Check 1. The coordinator's private key key is correct
@@ -128,15 +124,13 @@ template UpdateStateTree(
     // Check 2. The decrypted message matches the given message
     component decrypted_command = Decrypt(message_length - 1);
     decrypted_command.private_key <== ecdh.shared_key;
-    for (var i = 0; i < message_length; i++) {
-        decrypted_command.message[i] <== message[i];
-    }
 
-    // TODO: combine this loop with the above
     // Compute the leaf, which is the hash of the message
     component msg_hash = Hasher(message_length);
     msg_hash.key <== 0;
+
     for (var i = 0; i < message_length; i++) {
+        decrypted_command.message[i] <== message[i];
         msg_hash.in[i] <== message[i];
     }
 
@@ -149,8 +143,8 @@ template UpdateStateTree(
         msg_tree_leaf_exists.path_index[i] <== msg_tree_path_index[i];
     }
 
-    // Check 4. Make sure the hash of the data corresponds to the 
-    //          existing leaf in the state tree
+    // Check 4. Make sure the hash of the data corresponds to the existing leaf
+    // in the state tree
     component existing_state_tree_leaf_hash = Hasher(state_tree_data_length);
     existing_state_tree_leaf_hash.key <== 0;
     for (var i = 0; i < state_tree_data_length; i++) {
@@ -170,15 +164,13 @@ template UpdateStateTree(
     component vote_options_tree_valid = LeafExists(vote_options_tree_depth);
     vote_options_tree_valid.root <== vote_options_tree_root;
     vote_options_tree_valid.leaf <== vote_options_leaf_raw;
-    for (var i = 0; i < vote_options_tree_depth; i++) {
-        vote_options_tree_valid.path_elements[i] <== vote_options_tree_path_elements[i];
-        vote_options_tree_valid.path_index[i] <== vote_options_tree_path_index[i];
-    }
 
     // Update vote_option_tree_root with the newly updated vote weight
     component new_vote_options_tree = MerkleTreeInclusionProof(vote_options_tree_depth);
     new_vote_options_tree.leaf <== decrypted_command.out[CMD_VOTE_WEIGHT_IDX];
     for (var i = 0; i < vote_options_tree_depth; i++) {
+        vote_options_tree_valid.path_elements[i] <== vote_options_tree_path_elements[i];
+        vote_options_tree_valid.path_index[i] <== vote_options_tree_path_index[i];
         new_vote_options_tree.path_elements[i] <== vote_options_tree_path_elements[i];
         new_vote_options_tree.path_index[i] <== vote_options_tree_path_index[i];
     }
