@@ -11,6 +11,7 @@
     },
     "dependencies": {
         "argparse": "^1.0.10",
+        "libsemaphore": "^1.0.5",
         "ethers": "^4.0.45",
         "maci-crypto": "1.0.0",
         "maci-config": "1.0.0",

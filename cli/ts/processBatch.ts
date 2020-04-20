@@ -10,6 +10,8 @@ import {
 } from 'maci-contracts'
 
 import {
+    loadPk,
+    loadVk,
     compileAndLoadCircuit,
 } from 'maci-circuits'
 
@@ -21,6 +23,12 @@ import {
     Command,
     StateLeaf,
 } from 'maci-domainobjs'
+
+import {
+    genProof,
+    verifyProof,
+    genPublicSignals,
+} from 'libsemaphore'
 
 import {
     promptPwd,
@@ -213,7 +221,30 @@ const processBatch = async (args: any) => {
     const stateRootAfter = maciState.genStateRoot()
 
     const circuit = await compileAndLoadCircuit('batchUpdateStateTree_test.circom')
+
     debugger
+
+    // Calculate the witness
+    const witness = circuit.calculateWitness(circuitInputs)
+    if (!circuit.checkWitness(witness)) {
+        console.error('Error: unable to compute batch update state tree witness data')
+        return
+    }
+
+    // Get the circuit-generated root
+    const idx = circuit.getSignalIdx('main.root')
+    const circuitNewStateRoot = witness[idx].toString()
+    if (!circuitNewStateRoot.toString() === stateRootAfter.toString()) {
+        console.error('Error: circuit-computed root mismatch')
+        return
+    }
+    const publicSignals = genPublicSignals(witness, circuit)
+
+    const batchUstPk = loadPk('batchUstPk')
+    const batchUstVk = loadVk('batchUstVk')
+
+    console.log('Generating proof...')
+    const proof = await genProof(witness, batchUstPk)
 }
 
 export {
