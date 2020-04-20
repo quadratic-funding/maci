@@ -71,13 +71,13 @@ const loadPk = (binName: string): SnarkProvingKey => {
     return fs.readFileSync(p)
 }
 
-const loadkVk = (jsonName: string): SnarkVerifyingKey => {
+const loadVk = (jsonName: string): SnarkVerifyingKey => {
     const p = path.join(__dirname, '../../../circuits/build/' + jsonName + '.json')
     return parseVerifyingKeyJson(fs.readFileSync(p).toString())
 }
 
 const batchUstPk: SnarkProvingKey = loadPk('batchUstPk')
-const batchUstVk: SnarkVerifyingKey = loadkVk('batchUstVk')
+const batchUstVk: SnarkVerifyingKey = loadVk('batchUstVk')
 
 const accounts = genTestAccounts(5)
 const deployer = genDeployer(accounts[0].privateKey)
@@ -249,13 +249,16 @@ describe('BatchProcessMessage', () => {
 
             const publicSignals = genPublicSignals(witness, circuit)
 
-            expect(publicSignals).toHaveLength(19)
+            expect(publicSignals).toHaveLength(20)
 
             let ecdhPubKeys: PubKey[] = []
             for (let p of circuitInputs['ecdh_public_key']) {
                 const pubKey = new PubKey(p)
                 ecdhPubKeys.push(pubKey)
             }
+
+            const numMessages = await maciContract.numMessages()
+            const messageBatchSize = await maciContract.messageBatchSize()
 
             const contractPublicSignals = await maciContract.genBatchUstPublicSignals(
                 '0x' + stateRootAfter.toString(16),

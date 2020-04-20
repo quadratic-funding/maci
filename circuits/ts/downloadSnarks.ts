@@ -5,19 +5,19 @@ const main = async () => {
     const files = [
         {
             name: 'BatchUpdateStateTreeVerifier.sol',
-            url: 'https://www.dropbox.com/s/1wvrjpos5ybpgmr/BatchUpdateStateTreeVerifier.sol?dl=1',
+            url: 'https://www.dropbox.com/s/hkfmr7u1sc2or7a/BatchUpdateStateTreeVerifier.sol?dl=1',
         },
         {
             name: 'batchUstCircuit.json',
-            url: 'https://www.dropbox.com/s/plxvzo6g35ax0t9/batchUstCircuit.json?dl=1',
+            url: 'https://www.dropbox.com/s/h9vn7mhdcxyduyx/batchUstCircuit.json?dl=1',
         },
         {
             name: 'batchUstPk.bin',
-            url: 'https://www.dropbox.com/s/bgotz7qb28j1in7/batchUstPk.bin?dl=1',
+            url: 'https://www.dropbox.com/s/pp6fd7x8sxnb1h2/batchUstPk.bin?dl=1',
         },
         {
             name: 'batchUstVk.json',
-            url: 'https://www.dropbox.com/s/vx4dezg52xyu833/batchUstVk.json?dl=1',
+            url: 'https://www.dropbox.com/s/nuftxf0tcezgx41/batchUstVk.json?dl=1',
         },
         {
             name: 'QuadVoteTallyVerifier.sol',

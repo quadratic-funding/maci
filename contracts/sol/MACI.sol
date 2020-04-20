@@ -377,6 +377,14 @@ contract MACI is Ownable, DomainObjs {
         uint256[] memory _stateTreeRoots,
         PubKey[] memory _ecdhPubKeys
     ) public view returns (uint256[20] memory) {
+
+        uint256 messageBatchEndIndex;
+        if (currentMessageBatchIndex + messageBatchSize <= numMessages) {
+            messageBatchEndIndex = currentMessageBatchIndex + messageBatchSize - 1;
+        } else {
+            messageBatchEndIndex = numMessages - 1;
+        }
+
         uint256[20] memory publicSignals;
         publicSignals[0] = _newStateRoot;
         publicSignals[1] = coordinatorPubKey.x;
@@ -384,7 +392,7 @@ contract MACI is Ownable, DomainObjs {
         publicSignals[3] = voteOptionsMaxLeafIndex;
         publicSignals[4] = messageTree.root();
         publicSignals[5] = currentMessageBatchIndex;
-        publicSignals[6] = currentMessageBatchIndex + (numMessages % messageBatchSize);
+        publicSignals[6] = messageBatchEndIndex;
         publicSignals[7] = numSignUps;
 
         for (uint8 i = 0; i < messageBatchSize; i++) {
