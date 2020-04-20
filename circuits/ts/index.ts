@@ -40,12 +40,12 @@ const compileAndLoadCircuit = async (
 }
 
 const loadPk = (binName: string): SnarkProvingKey => {
-    const p = path.join(__dirname, '../circuits/build/' + binName + '.bin')
+    const p = path.join(__dirname, '../build/' + binName + '.bin')
     return fs.readFileSync(p)
 }
 
 const loadVk = (jsonName: string): SnarkVerifyingKey => {
-    const p = path.join(__dirname, '../circuits/build/' + jsonName + '.json')
+    const p = path.join(__dirname, '../build/' + jsonName + '.json')
     return parseVerifyingKeyJson(fs.readFileSync(p).toString())
 }
 

@@ -424,6 +424,11 @@ contract MACI is Ownable, DomainObjs {
     ) 
     isAfterVotingDeadline
     public {
+        // Ensure that the current batch index is within range
+        require(
+            currentMessageBatchIndex < numMessages,
+            "MACI: no more messages left to process"
+        );
         
         // Ensure that the array of state tree roots and the array of ECDH
         // public keys are of the correct length

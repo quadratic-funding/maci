@@ -1,4 +1,4 @@
-jest.setTimeout(30000)
+jest.setTimeout(400000)
 import * as ethers from 'ethers'
 
 import { MaciState } from 'maci-core'
@@ -198,15 +198,23 @@ describe('processBatch, tallyBatch, and prove CLI subcommands', () => {
     describe('The processBatch subcommand', () => {
 
         it('should process a batch of state leaves', async () =>{
+            const messageIndexBefore = await maciContract.currentMessageBatchIndex()
             // Run the processBatch command
-            const processBatchCommand = `node ../cli/build/index.js processBatch` +
+            const processBatchCommand = `NODE_OPTIONS=--max-old-space-size=4096 node ../cli/build/index.js processBatch` +
                 ` -sk ${coordinatorKeypair.privKey.serialize()}` +
                 ` -d ${userPrivKey}` +
                 ` -x ${maciAddress}`
 
             console.log(processBatchCommand)
-            const output = exec(processBatchCommand).stdout
+            const output = exec(processBatchCommand).stdout.trim()
             console.log(output)
+
+            // Check whether the transaction succeeded
+            const regMatch = output.match(/^Transaction hash: (0x[a-fA-F0-9]{64})$/)
+            expect(regMatch).toBeTruthy()
+
+            const messageIndexAfter = await maciContract.currentMessageBatchIndex()
+            expect((messageIndexAfter - messageIndexBefore).toString()).toEqual(messageBatchSize.toString())
         })
 
         it('should reject an invalid MACI contract address', async () =>{

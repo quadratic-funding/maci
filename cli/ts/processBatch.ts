@@ -7,6 +7,7 @@ import { MaciState } from 'maci-core'
 
 import {
     maciContractAbi,
+    formatProofForVerifierContract,
 } from 'maci-contracts'
 
 import {
@@ -178,9 +179,13 @@ const processBatch = async (args: any) => {
 
     // Check whether there are any remaining batches to process
     const currentMessageBatchIndex = await maciContract.currentMessageBatchIndex()
+    const numMessages = await maciContract.numMessages()
     const messageTreeMaxLeafIndex = await maciContract.messageTreeMaxLeafIndex()
 
-    if (currentMessageBatchIndex === messageTreeMaxLeafIndex) {
+    if (
+        currentMessageBatchIndex > numMessages ||
+        currentMessageBatchIndex === messageTreeMaxLeafIndex
+    ) {
         console.log('All messages have been processed')
         return
     }
@@ -222,8 +227,6 @@ const processBatch = async (args: any) => {
 
     const circuit = await compileAndLoadCircuit('batchUpdateStateTree_test.circom')
 
-    debugger
-
     // Calculate the witness
     const witness = circuit.calculateWitness(circuitInputs)
     if (!circuit.checkWitness(witness)) {
@@ -238,13 +241,52 @@ const processBatch = async (args: any) => {
         console.error('Error: circuit-computed root mismatch')
         return
     }
+
     const publicSignals = genPublicSignals(witness, circuit)
+
 
     const batchUstPk = loadPk('batchUstPk')
     const batchUstVk = loadVk('batchUstVk')
 
-    console.log('Generating proof...')
     const proof = await genProof(witness, batchUstPk)
+    const isValid = verifyProof(batchUstVk, proof, publicSignals)
+    if (!isValid) {
+        console.error('Error: could not generate a valid proof or the verifying key is incorrect')
+        return
+    }
+
+    let ecdhPubKeys: PubKey[] = []
+    for (let p of circuitInputs['ecdh_public_key']) {
+        const pubKey = new PubKey(p)
+        ecdhPubKeys.push(pubKey)
+    }
+
+    const formattedProof = formatProofForVerifierContract(proof)
+    const tx = await maciContract.batchProcessMessage(
+        '0x' + stateRootAfter.toString(16),
+        circuitInputs['state_tree_root'].map((x) => x.toString()),
+        ecdhPubKeys.map((x) => x.asContractParam()),
+        formattedProof,
+        { gasLimit: 2000000 },
+    )
+
+    const receipt = await tx.wait()
+
+    if (receipt.status !== 1) {
+        console.error('Error: BatchProcessMessage() failed')
+        return
+    }
+
+    const postSignUpStateRoot = await maciContract.postSignUpStateRoot()
+    if (postSignUpStateRoot.toString() !== stateRootAfter.toString()) {
+        console.error('Error: state root mismatch after processing a batch of messges')
+        return
+    }
+
+    console.log(`Transaction hash: ${tx.hash}`)
+
+    // Force the process to exit as it might get stuck
+    process.exit()
 }
 
 export {
