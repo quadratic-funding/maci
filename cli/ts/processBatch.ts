@@ -182,11 +182,8 @@ const processBatch = async (args: any) => {
     const numMessages = await maciContract.numMessages()
     const messageTreeMaxLeafIndex = await maciContract.messageTreeMaxLeafIndex()
 
-    if (
-        currentMessageBatchIndex > numMessages ||
-        currentMessageBatchIndex === messageTreeMaxLeafIndex
-    ) {
-        console.log('All messages have been processed')
+    if (! (await maciContract.hasUnprocessedMessages())) {
+        console.error('Error: all messages have been processed')
         return
     }
 

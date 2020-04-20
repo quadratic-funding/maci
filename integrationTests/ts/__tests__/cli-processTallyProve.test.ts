@@ -46,7 +46,7 @@ const maxUsers = 2 ** 4 - 1
 const maxMessages = 2 ** 4 - 1
 const maxVoteOptions = 15
 const signupDuration = 10 
-const votingDuration = 10
+const votingDuration = 15
 const messageBatchSize = 4
 const tallyBatchSize = 4
 const initialVoiceCredits = 1000
@@ -192,7 +192,7 @@ describe('processBatch, tallyBatch, and prove CLI subcommands', () => {
         )
 
         // Wait for the voting period to pass
-        await delay(1000 * signupDuration)
+        await delay(1000 * votingDuration)
     })
 
     describe('The processBatch subcommand', () => {
@@ -206,7 +206,11 @@ describe('processBatch, tallyBatch, and prove CLI subcommands', () => {
                 ` -x ${maciAddress}`
 
             console.log(processBatchCommand)
-            const output = exec(processBatchCommand).stdout.trim()
+            const e = exec(processBatchCommand)
+            if (e.stderr) {
+                console.log(e)
+            }
+            const output = e.stdout.trim()
             console.log(output)
 
             // Check whether the transaction succeeded

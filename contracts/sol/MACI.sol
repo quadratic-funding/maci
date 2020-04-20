@@ -407,6 +407,10 @@ contract MACI is Ownable, DomainObjs {
         return publicSignals;
     }
 
+    function hasUnprocessedMessages() public view returns (bool) {
+        return currentMessageBatchIndex < numMessages;
+    }
+
     /*
      * Update the postSignupStateRoot if the batch update state root proof is
      * valid.
@@ -426,7 +430,7 @@ contract MACI is Ownable, DomainObjs {
     public {
         // Ensure that the current batch index is within range
         require(
-            currentMessageBatchIndex < numMessages,
+            hasUnprocessedMessages(),
             "MACI: no more messages left to process"
         );
         

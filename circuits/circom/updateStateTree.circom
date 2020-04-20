@@ -32,10 +32,10 @@ template UpdateStateTree(
     // Output: New state tree root
     signal output root;
 
-    // Input(s)
+    // The coordinator's public key
     signal input coordinator_public_key[2];
 
-    // Note: a message is an encrypted command
+    // Note that a message is an encrypted command
     var message_length = 11;
     var message_signature_length = 4;
     var message_without_signature_length = message_length - message_signature_length;
@@ -57,21 +57,20 @@ template UpdateStateTree(
      */
     signal input message[message_length];
 
-    // Note: State tree data length is the command parsed, and then massaged to
-    // fit the schema
     var STATE_TREE_PUBLIC_KEY_X_IDX = 0;
     var STATE_TREE_PUBLIC_KEY_Y_IDX = 1;
     var STATE_TREE_VOTE_OPTION_TREE_ROOT_IDX = 2;
     var STATE_TREE_VOTE_BALANCE_IDX = 3;
     var STATE_TREE_NONCE_IDX = 4;
 
-    var state_tree_data_length = 5;
+    // The number of values per state leaf
+    var STATE_TREE_DATA_LENGTH = 5;
 
     // Select vote option index's weight
     // (a.k.a the raw value of the leaf pre-hash)
     signal private input vote_options_leaf_raw;
 
-    // Vote options tree root (supplied by coordinator)
+    // Vote option tree root
     signal private input vote_options_tree_root;
     signal private input vote_options_tree_path_elements[vote_options_tree_depth];
     signal private input vote_options_tree_path_index[vote_options_tree_depth];
@@ -83,7 +82,7 @@ template UpdateStateTree(
     signal input msg_tree_path_index[message_tree_depth];
 
     // State tree
-    signal private input state_tree_data_raw[state_tree_data_length];
+    signal private input state_tree_data_raw[STATE_TREE_DATA_LENGTH];
 
     signal input state_tree_max_leaf_index;
     signal input state_tree_root;
@@ -145,9 +144,9 @@ template UpdateStateTree(
 
     // Check 4. Make sure the hash of the data corresponds to the existing leaf
     // in the state tree
-    component existing_state_tree_leaf_hash = Hasher(state_tree_data_length);
+    component existing_state_tree_leaf_hash = Hasher(STATE_TREE_DATA_LENGTH);
     existing_state_tree_leaf_hash.key <== 0;
-    for (var i = 0; i < state_tree_data_length; i++) {
+    for (var i = 0; i < STATE_TREE_DATA_LENGTH; i++) {
         existing_state_tree_leaf_hash.in[i] <== state_tree_data_raw[i];
     }
 
@@ -200,16 +199,16 @@ template UpdateStateTree(
     new_vote_credits <== state_tree_data_raw[STATE_TREE_VOTE_BALANCE_IDX] + vote_options_leaf_squared - user_vote_weight_squared;
 
     // Construct new state tree data (and its hash)
-    signal new_state_tree_data[state_tree_data_length];
+    signal new_state_tree_data[STATE_TREE_DATA_LENGTH];
     new_state_tree_data[0] <== decrypted_command.out[CMD_PUBLIC_KEY_X_IDX];
     new_state_tree_data[1] <== decrypted_command.out[CMD_PUBLIC_KEY_Y_IDX];
     new_state_tree_data[2] <== new_vote_options_tree.root;
     new_state_tree_data[3] <== new_vote_credits;
     new_state_tree_data[4] <== decrypted_command.out[CMD_NONCE_IDX];
 
-    component new_state_tree_leaf = Hasher(state_tree_data_length);
+    component new_state_tree_leaf = Hasher(STATE_TREE_DATA_LENGTH);
     new_state_tree_leaf.key <== 0;
-    for (var i = 0; i < state_tree_data_length; i++) {
+    for (var i = 0; i < STATE_TREE_DATA_LENGTH; i++) {
         new_state_tree_leaf.in[i] <== new_state_tree_data[i];
     }
 
