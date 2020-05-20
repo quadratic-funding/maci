@@ -13,7 +13,7 @@ const PoseidonT3 = require('@maci-contracts/compiled/PoseidonT3.json')
 const PoseidonT6 = require('@maci-contracts/compiled/PoseidonT6.json')
 
 const IncrementalMerkleTreeAbi = require('@maci-contracts/compiled/IncrementalMerkleTree.json')
-const ComputeRootAbi = require('@maci-contracts/compiled/ComputeRoot.json')
+//const ComputeRootAbi = require('@maci-contracts/compiled/ComputeRoot.json')
 
 const accounts = genTestAccounts(1)
 let deployer
@@ -21,7 +21,7 @@ let mtContract
 let crContract
 let PoseidonT3Contract, PoseidonT6Contract
 
-const DEPTH = 32
+const DEPTH = 30
 
 let tree
 describe('IncrementalMerkleTree', () => {

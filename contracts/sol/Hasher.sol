@@ -7,9 +7,9 @@
 
 pragma solidity ^0.5.0;
 
-import {PoseidonT3, PoseidonT6} from "./Poseidon.sol";
+import { PoseidonT3, PoseidonT6 } from "./Poseidon.sol";
 
-import {SnarkConstants} from "./SnarkConstants.sol";
+import { SnarkConstants } from "./SnarkConstants.sol";
 
 
 contract Hasher is SnarkConstants {
