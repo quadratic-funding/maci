@@ -22,7 +22,7 @@ let mtContract
 let crContract
 let PoseidonT3Contract, PoseidonT6Contract
 
-const DEPTH = 32
+const DEPTH = 10
 
 let tree
 describe('IncrementalMerkleTree', () => {
@@ -78,12 +78,13 @@ describe('IncrementalMerkleTree', () => {
     })
 
     it('the on-chain root should match an off-chain root after various insertions', async () => {
-        expect.assertions(8)
-        for (let i = 0; i < 8; i++) {
+        expect.assertions(4)
+        for (let i = 0; i < 4; i++) {
             const leaf = genRandomSalt()
 
             const tx = await mtContract.insertLeaf(leaf.toString())
-            await tx.wait()
+            const receipt = await tx.wait()
+            console.log('Gas used:', receipt.gasUsed.toString())
             const root1 = await mtContract.root()
 
             tree.insert(leaf)

@@ -21,7 +21,7 @@ let mtContract
 let crContract
 let PoseidonT3Contract, PoseidonT6Contract
 
-const DEPTH = 32
+const DEPTH = 5
 
 let tree
 describe('IncrementalQuinTree', () => {
@@ -84,7 +84,8 @@ describe('IncrementalQuinTree', () => {
 
             tree.insert(leaf)
             const tx = await mtContract.insertLeaf(leaf.toString())
-            await tx.wait()
+            const receipt = await tx.wait()
+            console.log('Gas used:', receipt.gasUsed.toString())
             const root1 = (await mtContract.root()).toString()
 
             expect(tree.root.toString()).toEqual(root1)
