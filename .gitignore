@@ -1,3 +1,6 @@
+.~lock.data.csv#
+cli/*.csv
+MACI_SK.SECRET
 solc
 *.ptau
 cli/tally.json

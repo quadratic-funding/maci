@@ -25,6 +25,91 @@ import {
     maciContractAbi,
 } from 'maci-contracts'
 
+const genMaciStateFromContractSignUpsAndVotesOnly = async (
+    provider: ethers.providers.Provider,
+    address: string,
+    coordinatorKeypair: Keypair,
+) => {
+    const maciContract = new ethers.Contract(
+        address,
+        maciContractAbi,
+        provider,
+    )
+
+    const treeDepths = await maciContract.treeDepths()
+    const stateTreeDepth = BigInt(treeDepths[0].toString())
+    const messageTreeDepth = BigInt(treeDepths[1].toString())
+    const voteOptionTreeDepth = BigInt(treeDepths[2].toString())
+    const maxVoteOptionIndex = BigInt((
+            await maciContract.voteOptionsMaxLeafIndex()
+        ).toString())
+
+    const maciState = new MaciState(
+        coordinatorKeypair,
+        stateTreeDepth,
+        messageTreeDepth,
+        voteOptionTreeDepth,
+        maxVoteOptionIndex,
+    )
+
+    const signUpLogs = await provider.getLogs({
+        ...maciContract.filters.SignUp(),
+        fromBlock: 0,
+    })
+    
+    const publishMessageLogs = await provider.getLogs({
+        ...maciContract.filters.PublishMessage(),
+        fromBlock: 0,
+    })
+
+    const iface = new ethers.utils.Interface(maciContractAbi)
+    for (const log of signUpLogs) {
+        const event = iface.parseLog(log)
+        const voiceCreditBalance = BigInt(event.values._voiceCreditBalance.toString())
+        const pubKey = new PubKey([
+            BigInt(event.values._userPubKey[0]),
+            BigInt(event.values._userPubKey[1]),
+        ])
+
+        maciState.signUp(
+            pubKey,
+            voiceCreditBalance,
+        )
+    }
+
+    const messageBlockNums: number[] = []
+
+    for (const log of publishMessageLogs) {
+        // @ts-ignore
+        messageBlockNums.push(log.blockNumber)
+
+        const event = iface.parseLog(log)
+        const msgIv = BigInt(event.values._message[0].toString())
+        const msgData = event.values._message[1].map((x) => BigInt(x.toString()))
+        const message = new Message(msgIv, msgData)
+        const encPubKey = new PubKey([
+            BigInt(event.values._encPubKey[0]),
+            BigInt(event.values._encPubKey[1]),
+        ])
+
+        maciState.publishMessage(message, encPubKey)
+    }
+    
+    // Check whether the above steps were done correctly
+    const onChainStateRoot = await maciContract.getStateTreeRoot()
+
+    if (maciState.genStateRoot().toString(16) !== BigInt(onChainStateRoot).toString(16)) {
+        throw new Error('Error: could not correctly recreate the state tree from on-chain data. The state root differs.')
+    }
+
+    const onChainMessageRoot = await maciContract.getMessageTreeRoot()
+    if (maciState.genMessageRoot().toString(16) !== BigInt(onChainMessageRoot).toString(16)) {
+        throw new Error('Error: could not correctly recreate the message tree from on-chain data. The message root differs.')
+    }
+
+    return { messageBlockNums, maciState }
+}
+
 /*
  * Retrieves and parses on-chain MACI contract data to create an off-chain
  * representation as a MaciState object.
@@ -229,4 +314,5 @@ export {
     validateEthAddress,
     contractExists,
     genMaciStateFromContract,
+    genMaciStateFromContractSignUpsAndVotesOnly,
 }
