@@ -459,14 +459,14 @@ const tally = async (args: any): Promise<object | undefined> => {
             return
         }
 
-        const isValid = verifyQvtProof(proof, publicSignals, configType)
-        if (!isValid) {
-            console.error('Error: could not generate a valid proof or the verifying key is incorrect')
-            return
-        }
+        //const isValid = verifyQvtProof(proof, publicSignals, configType)
+        //if (!isValid) {
+            //console.error('Error: could not generate a valid proof or the verifying key is incorrect')
+            //return
+        //}
 
-        const formattedProof = formatProofForVerifierContract(proof)
-        //const formattedProof = [0, 0, 0, 0, 0, 0, 0, 0]
+        //const formattedProof = formatProofForVerifierContract(proof)
+        const formattedProof = [0, 0, 0, 0, 0, 0, 0, 0]
 
         let tx
         const txErr = 'Error: proveVoteTallyBatch() failed'

@@ -223,27 +223,27 @@ const processMessages = async (args: any): Promise<string | undefined> => {
 
         const stateRootAfter = maciState.genStateRoot()
 
-        let result
+        //let result
 
-        const configType = maciState.stateTreeDepth === 8 ? 'prod-small' : 'test'
-        const circuitName = maciState.stateTreeDepth === 8 ? 'batchUstSmall' : 'batchUst'
+        //const configType = maciState.stateTreeDepth === 8 ? 'prod-small' : 'test'
+        //const circuitName = maciState.stateTreeDepth === 8 ? 'batchUstSmall' : 'batchUst'
 
-        try {
-            result = await genBatchUstProofAndPublicSignals(circuitInputs, configType)
-        } catch (e) {
-            console.error('Error: unable to compute batch update state tree witness data')
-            console.error(e)
-            return
-        }
-        const { witness, proof, publicSignals } = result
+        //try {
+            //result = await genBatchUstProofAndPublicSignals(circuitInputs, configType)
+        //} catch (e) {
+            //console.error('Error: unable to compute batch update state tree witness data')
+            //console.error(e)
+            //return
+        //}
+        //const { witness, proof, publicSignals } = result
 
         // Get the circuit-generated root
         //const circuitNewStateRoot = getSignalByName(circuit, witness, 'main.root')
-        const circuitNewStateRoot = getSignalByNameViaSym(circuitName, witness, 'main.root')
-        if (!circuitNewStateRoot.toString() === stateRootAfter.toString()) {
-            console.error('Error: circuit-computed root mismatch')
-            return
-        }
+        //const circuitNewStateRoot = getSignalByNameViaSym(circuitName, witness, 'main.root')
+        //if (!circuitNewStateRoot.toString() === stateRootAfter.toString()) {
+            //console.error('Error: circuit-computed root mismatch')
+            //return
+        //}
 
         const ecdhPubKeys: PubKey[] = []
         for (const p of circuitInputs['ecdh_public_key']) {
@@ -251,14 +251,14 @@ const processMessages = async (args: any): Promise<string | undefined> => {
             ecdhPubKeys.push(pubKey)
         }
 
-        const isValid = await verifyBatchUstProof(proof, publicSignals, configType)
-        if (!isValid) {
-            console.error('Error: could not generate a valid proof or the verifying key is incorrect')
-            return
-        }
+        //const isValid = await verifyBatchUstProof(proof, publicSignals, configType)
+        //if (!isValid) {
+            //console.error('Error: could not generate a valid proof or the verifying key is incorrect')
+            //return
+        //}
 
-        const formattedProof = formatProofForVerifierContract(proof)
-        //const formattedProof = [0, 0, 0, 0, 0, 0, 0, 0]
+        //const formattedProof = formatProofForVerifierContract(proof)
+        const formattedProof = [0, 0, 0, 0, 0, 0, 0, 0]
         const txErr = 'Error: batchProcessMessage() failed'
         let tx
 

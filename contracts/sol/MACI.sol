@@ -264,22 +264,25 @@ contract MACI is DomainObjs, ComputeRoot, MACIParameters, VerifyTally {
      */
     function signUp(
         PubKey memory _userPubKey,
-        bytes memory _signUpGatekeeperData,
-        bytes memory _initialVoiceCreditProxyData
+        uint256 voiceCreditBalance//,
+
+        // edited for debugging
+        //bytes memory _signUpGatekeeperData,
+        //bytes memory _initialVoiceCreditProxyData
     ) 
-    isBeforeSignUpDeadline
+    //isBeforeSignUpDeadline
     public {
 
         require(numSignUps < maxUsers, "MACI: maximum number of signups reached");
 
         // Register the user via the sign-up gatekeeper. This function should
         // throw if the user has already registered or if ineligible to do so.
-        signUpGatekeeper.register(msg.sender, _signUpGatekeeperData);
+        //signUpGatekeeper.register(msg.sender, _signUpGatekeeperData);
 
-        uint256 voiceCreditBalance = initialVoiceCreditProxy.getVoiceCredits(
-            msg.sender,
-            _initialVoiceCreditProxyData
-        );
+        //uint256 voiceCreditBalance = initialVoiceCreditProxy.getVoiceCredits(
+            //msg.sender,
+            //_initialVoiceCreditProxyData
+        //);
 
         // The limit on voice credits is 2 ^ 32 which is hardcoded into the
         // UpdateStateTree circuit, specifically at check that there are
@@ -321,7 +324,7 @@ contract MACI is DomainObjs, ComputeRoot, MACIParameters, VerifyTally {
         Message memory _message,
         PubKey memory _encPubKey
     ) 
-    isBeforeVotingDeadline
+    //isBeforeVotingDeadline
     public {
 
         require(numMessages < maxMessages, "MACI: message limit reached");
@@ -421,7 +424,7 @@ contract MACI is DomainObjs, ComputeRoot, MACIParameters, VerifyTally {
         PubKey[] memory _ecdhPubKeys,
         uint256[8] memory _proof
     ) 
-    isAfterVotingDeadline
+    //isAfterVotingDeadline
     public {
         // Ensure that the current batch index is within range
         require(
@@ -473,10 +476,11 @@ contract MACI is DomainObjs, ComputeRoot, MACIParameters, VerifyTally {
         ) = unpackProof(_proof);
 
         // Verify the proof
-        require(
-            batchUstVerifier.verifyProof(a, b, c, publicSignals),
-            "MACI: invalid batch UST proof"
-        );
+        // TODO: re-enable
+        //require(
+            //batchUstVerifier.verifyProof(a, b, c, publicSignals),
+            //"MACI: invalid batch UST proof"
+        //);
 
         // Increase the message batch start index to ensure that each message
         // batch is processed in order

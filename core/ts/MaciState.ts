@@ -187,6 +187,7 @@ class MaciState {
         const encPubKey = this.encPubKeys[_index]
 
         // Decrypt the message
+        debugger
         const sharedKey = Keypair.genEcdhSharedKey(this.coordinatorKeypair.privKey, encPubKey)
         const { command, signature } = Command.decrypt(message, sharedKey)
 

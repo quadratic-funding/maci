@@ -77,22 +77,31 @@ const configureSubparser = (subparsers: any) => {
     )
 
     parser.addArgument(
-        ['-s', '--sg-data'],
+        ['-v', '--voice-credits'],
         {
             action: 'store',
             type: 'string',
-            help: 'A hex string to pass to the sign-up gatekeeper proxy contract which may use it to determine whether to allow the user to sign up. Default: an empty bytestring.',
+            help: 'The number of voice credits to assign',
         }
     )
 
-    parser.addArgument(
-        ['-v', '--ivcp-data'],
-        {
-            action: 'store',
-            type: 'string',
-            help: 'A hex string to pass to the initial voice credit proxy contract which may use it to determine how many voice credits to assign to the user. Default: an empty bytestring.',
-        }
-    )
+    //parser.addArgument(
+        //['-s', '--sg-data'],
+        //{
+            //action: 'store',
+            //type: 'string',
+            //help: 'A hex string to pass to the sign-up gatekeeper proxy contract which may use it to determine whether to allow the user to sign up. Default: an empty bytestring.',
+        //}
+    //)
+
+    //parser.addArgument(
+        //['-v', '--ivcp-data'],
+        //{
+            //action: 'store',
+            //type: 'string',
+            //help: 'A hex string to pass to the initial voice credit proxy contract which may use it to determine how many voice credits to assign to the user. Default: an empty bytestring.',
+        //}
+    //)
 }
 
 const signup = async (args: any) => {
@@ -140,20 +149,20 @@ const signup = async (args: any) => {
         return
     }
 
-    const sgData = args.sg_data ? args.sg_data : DEFAULT_SG_DATA
-    const ivcpData = args.ivcp_data ? args.ivcp_data : DEFAULT_IVCP_DATA
+    //const sgData = args.sg_data ? args.sg_data : DEFAULT_SG_DATA
+    //const ivcpData = args.ivcp_data ? args.ivcp_data : DEFAULT_IVCP_DATA
 
-    const regex32ByteHex = /^0x[a-fA-F0-9]{64}$/
+    //const regex32ByteHex = /^0x[a-fA-F0-9]{64}$/
 
-    if (!sgData.match(regex32ByteHex)) {
-        console.error('Error: invalid signup gateway data')
-        return
-    }
+    //if (!sgData.match(regex32ByteHex)) {
+        //console.error('Error: invalid signup gateway data')
+        //return
+    //}
 
-    if (!ivcpData.match(regex32ByteHex)) {
-        console.error('Error: invalid initial voice credit proxy data')
-        return
-    }
+    //if (!ivcpData.match(regex32ByteHex)) {
+        //console.error('Error: invalid initial voice credit proxy data')
+        //return
+    //}
 
     const provider = new ethers.providers.JsonRpcProvider(ethProvider)
     const wallet = new ethers.Wallet(ethSk, provider)
@@ -173,8 +182,9 @@ const signup = async (args: any) => {
     try {
         tx = await maciContract.signUp(
             userMaciPubKey.asContractParam(),
-            sgData,
-            ivcpData,
+            args.voice_credits.toString(),
+            //sgData,
+            //ivcpData,
             { gasLimit: 1000000 }
         )
 
