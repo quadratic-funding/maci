@@ -19,6 +19,7 @@
         "maci-circuits": "^0.5.7",
         "maci-config": "^0.5.7",
         "maci-contracts": "^0.5.7",
+        "shelljs": "^0.8.3",
         "maci-core": "^0.5.7",
         "maci-crypto": "^0.5.7",
         "maci-domainobjs": "^0.5.7",
