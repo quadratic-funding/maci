@@ -595,9 +595,9 @@ contract MACI is DomainObjs, ComputeRoot, MACIParameters, VerifyTally {
         ) = unpackProof(_proof);
 
         // Verify the proof
-        bool isValid = qvtVerifier.verifyProof(a, b, c, publicSignals);
+        //bool isValid = qvtVerifier.verifyProof(a, b, c, publicSignals);
 
-        require(isValid == true, "MACI: invalid quadratic vote tally proof");
+        //require(isValid == true, "MACI: invalid quadratic vote tally proof");
 
         // Save the commitment to the new results for the next batch
         currentResultsCommitment = _newResultsCommitment;
