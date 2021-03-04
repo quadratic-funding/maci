@@ -275,6 +275,7 @@ const tally = async (args: any): Promise<object | undefined> => {
         wallet,
     )
 
+    console.log('current on-chain state root:', await maciContract.stateRoot())
     // Check whether it's the right time to tally messages
     if (await maciContract.hasUnprocessedMessages()) {
         console.error('Error: not all messages have been processed')
@@ -301,6 +302,7 @@ const tally = async (args: any): Promise<object | undefined> => {
         console.error(e)
         return
     }
+    console.log('State root after genMaciStateFromContract()', maciState.genStateRoot().toString(16))
 
     const batchSize = BigInt((await maciContract.tallyBatchSize()).toString())
 
@@ -458,6 +460,14 @@ const tally = async (args: any): Promise<object | undefined> => {
 
         if (!publicSignalMatch) {
             console.error('Error: public signal mismatch')
+            console.error(
+                'On-chain state root:', 
+                await maciContract.stateRoot(),
+            )
+            console.error(
+                'Off--chain state root:', 
+                maciState.genStateRoot().toString(16),
+            )
             return
         }
 

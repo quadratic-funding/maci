@@ -1,3 +1,5 @@
+hardhat.config.js
+runGanacheFork.sh
 solc
 *.ptau
 cli/tally.json

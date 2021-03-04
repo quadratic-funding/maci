@@ -206,7 +206,8 @@ const processMessages = async (args: any): Promise<string | undefined> => {
     let randomStateLeaf 
 
     while (true) {
-        randomStateLeaf = StateLeaf.genRandomLeaf()
+        //randomStateLeaf = StateLeaf.genRandomLeaf()
+        randomStateLeaf = StateLeaf.unserialize('eyJwdWJLZXkiOiJtYWNpcGsuZmVlNjZhOTI4OTY1M2E5YjdiM2ZmNzFkYTc3MzZkNjVmMDg1YjkzMGM5ZjMwZWU4MjExMGMwNGU1MDQyMjAwZCIsInZvdGVPcHRpb25UcmVlUm9vdCI6IjE5OTg5YmY1NjkzYWNlN2Q1YzkxZTEwMzYxMTdmZjNjNTc5ZjMxYWMxNDk2MjJhMjFlZTIzOGU2MDUyZjYzOTAiLCJ2b2ljZUNyZWRpdEJhbGFuY2UiOiIxZDJiYjM1NDA0YjMyZDY4YjBmNjhhZDQwNjIxMmJjZWI5MzFiNTI3NDAxOGI3NTgxOTMxYzMxOWMxZmU5YTRkIiwibm9uY2UiOiIyNWMxNGEzYTI3M2E3YWRlNmMyY2E2ODYzMWIzMWQ5NjY0MzU1NjNmODI0M2ZiNWFlNDY4NzYxYzljNmI5MTJiIn0=')
         const messageBatchIndex = await maciContract.currentMessageBatchIndex()
 
         const circuitInputs = maciState.genBatchUpdateStateTreeCircuitInputs(
@@ -262,6 +263,7 @@ const processMessages = async (args: any): Promise<string | undefined> => {
         //const formattedProof = [0, 0, 0, 0, 0, 0, 0, 0]
         const txErr = 'Error: batchProcessMessage() failed'
         let tx
+        console.log('stateRootAfter:', stateRootAfter.toString(16))
 
         try {
             tx = await maciContract.batchProcessMessage(
@@ -289,6 +291,7 @@ const processMessages = async (args: any): Promise<string | undefined> => {
             await delay(1000)
             const stateRoot = await maciContract.stateRoot()
             if (stateRoot.toString() === stateRootAfter.toString()) {
+                console.log('new state root on chain', stateRoot)
                 break
             } else {
                 console.log('Waiting for the RPC node to update to the latest state...')

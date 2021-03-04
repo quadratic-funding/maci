@@ -132,6 +132,7 @@ const genMaciStateFromContract = async (
     } else {
         // Process all messages (in reverse order)
         for (let i = maxMessageBatchIndex; i > 0; i -= messageBatchSize) {
+            console.log('Processing batch from', i - messageBatchSize)
             maciState.batchProcessMessage(
                 i - messageBatchSize,
                 messageBatchSize,
