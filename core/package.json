@@ -1,6 +1,6 @@
 {
     "name": "qaci-core",
-    "version": "1.0.7",
+    "version": "1.0.8",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -18,8 +18,8 @@
     },
     "dependencies": {
         "module-alias": "^2.2.2",
-        "qaci-crypto": "^1.0.7",
-        "qaci-domainobjs": "^1.0.7"
+        "qaci-crypto": "^1.0.8",
+        "qaci-domainobjs": "^1.0.8"
     },
     "devDependencies": {
         "@types/jest": "^26.0.21",
