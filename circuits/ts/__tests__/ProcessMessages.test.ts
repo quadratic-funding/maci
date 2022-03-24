@@ -8,7 +8,7 @@ import {
 import {
     MaciState,
     STATE_TREE_DEPTH,
-} from 'maci-core'
+} from 'qaci-core'
 
 import {
     PrivKey,
@@ -17,7 +17,7 @@ import {
     Message,
     VerifyingKey,
     Ballot,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import {
     hash5,
@@ -25,7 +25,7 @@ import {
     G2Point,
     IncrementalQuinTree,
     stringifyBigInts,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 const voiceCreditBalance = BigInt(100)
 

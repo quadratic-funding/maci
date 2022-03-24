@@ -1,10 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { IncrementalQuinTree, hash5 } from 'maci-crypto'
+import { IncrementalQuinTree, hash5 } from 'qaci-crypto'
 import {
     Ballot,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 const genEmptyBallotRootsContract = (
 ): string => {

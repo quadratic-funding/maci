@@ -7,7 +7,7 @@ import {
     NOTHING_UP_MY_SLEEVE,
     hash2,
     hash5,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
 
 const enqueueGasLimit = { gasLimit: 500000 }

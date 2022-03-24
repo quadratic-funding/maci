@@ -5,24 +5,24 @@ import {
     PrivKey,
     Keypair,
     Command,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import {
     MaciState,
     TreeDepths,
     MaxValues,
-} from 'maci-core'
+} from 'qaci-core'
 
 import {
     genRandomSalt,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
-import { genPubKey } from 'maci-crypto'
+import { genPubKey } from 'qaci-crypto'
 
 import { exec, loadYaml, genTestUserCommands, expectTally } from './utils'
 
 const loadData = (name: string) => {
-    return require('@maci-integrationTests/ts/__tests__/' + name)
+    return require('@qaci-integrationTests/ts/__tests__/' + name)
 }
 
 const executeSuite = async (data: any, expect: any) => {

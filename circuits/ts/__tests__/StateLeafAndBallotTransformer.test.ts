@@ -7,12 +7,12 @@ import {
 import { 
     stringifyBigInts,
     genRandomSalt,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 import {
     Command,
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 const keypair = new Keypair()
 const stateIndex = BigInt(1)

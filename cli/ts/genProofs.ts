@@ -2,23 +2,23 @@ import * as ethers from 'ethers'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { genProof, verifyProof, extractVk } from 'maci-circuits'
-import { hashLeftRight, hash3 } from 'maci-crypto'
-import { PrivKey, Keypair } from 'maci-domainobjs'
-import { genTallyResultCommitment } from 'maci-core'
+import { genProof, verifyProof, extractVk } from 'qaci-circuits'
+import { hashLeftRight, hash3 } from 'qaci-crypto'
+import { PrivKey, Keypair } from 'qaci-domainobjs'
+import { genTallyResultCommitment } from 'qaci-core'
 
 import {
     parseArtifact,
     getDefaultSigner,
     genMaciStateFromContract,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
 import {
     promptPwd,
     validateEthAddress,
     contractExists,
 } from './utils'
-import {readJSONFile} from 'maci-common'
+import {readJSONFile} from 'qaci-common'
 import {contractFilepath} from './config'
 
 const configureSubparser = (subparsers: any) => {
@@ -30,7 +30,7 @@ const configureSubparser = (subparsers: any) => {
     const maciPrivkeyGroup = parser.addMutuallyExclusiveGroup({ required: true })
 
     maciPrivkeyGroup.addArgument(
-        ['-dsk', '--prompt-for-maci-privkey'],
+        ['-dsk', '--prompt-for-qaci-privkey'],
         {
             action: 'storeTrue',
             help: 'Whether to prompt for your serialized MACI private key',

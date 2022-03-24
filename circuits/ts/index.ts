@@ -3,7 +3,7 @@ import * as path from 'path'
 import * as shelljs from 'shelljs'
 import * as tmp from 'tmp'
 
-import { stringifyBigInts } from 'maci-crypto'
+import { stringifyBigInts } from 'qaci-crypto'
 
 const snarkjsPath = path.join(
     __dirname,

@@ -7,12 +7,12 @@ import {
 import { 
     stringifyBigInts,
     genRandomSalt,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 import {
     Keypair,
     Command,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 describe('MessageToCommand circuit', () => {
     const circuit = 'messageToCommand_test'

@@ -1,5 +1,5 @@
 jest.setTimeout(120000)
-import { stringifyBigInts } from 'maci-crypto'
+import { stringifyBigInts } from 'qaci-crypto'
 
 import { 
     genWitness,
@@ -8,7 +8,7 @@ import {
 
 import {
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 describe('Public key derivation circuit', () => {
     const circuit = 'ecdh_test'

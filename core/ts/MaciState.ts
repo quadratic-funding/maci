@@ -11,7 +11,7 @@ import {
     sha256Hash,
     stringifyBigInts,
     Signature,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 import {
     PubKey,
     VerifyingKey,
@@ -20,7 +20,7 @@ import {
     Keypair,
     StateLeaf,
     Ballot,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 interface TreeDepths {
     intStateTreeDepth: number;

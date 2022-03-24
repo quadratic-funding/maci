@@ -1,5 +1,5 @@
 {
-    "name": "maci-integrationtests",
+    "name": "qaci-integrationtests",
     "version": "1.0.6",
     "description": "",
     "main": "build/index.js",
@@ -16,8 +16,8 @@
         "test-suites-debug": "NODE_OPTIONS=--max-old-space-size=4096 node --inspect-brk ./node_modules/.bin/jest suites.test.ts"
     },
     "_moduleAliases": {
-        "@maci-contracts": "../contracts/",
-        "@maci-integrationTests": "./"
+        "@qaci-contracts": "../contracts/",
+        "@qaci-integrationTests": "./"
     },
     "devDependencies": {
         "@nomiclabs/hardhat-ethers": "^2.0.2",
@@ -29,12 +29,12 @@
         "hardhat-contract-sizer": "^2.0.3",
         "jest": "^26.6.3",
         "js-yaml": "^4.0.0",
-        "maci-circuits": "^1.0.6",
-        "maci-cli": "^1.0.6",
-        "maci-contracts": "^1.0.6",
-        "maci-core": "^1.0.6",
-        "maci-crypto": "^1.0.6",
-        "maci-domainobjs": "^1.0.6",
+        "qaci-circuits": "^1.0.6",
+        "qaci-cli": "^1.0.6",
+        "qaci-contracts": "^1.0.6",
+        "qaci-core": "^1.0.6",
+        "qaci-crypto": "^1.0.6",
+        "qaci-domainobjs": "^1.0.6",
         "module-alias": "^2.2.2",
         "shelljs": "^0.8.3",
         "ts-jest": "^26.5.4"

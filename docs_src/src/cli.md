@@ -42,7 +42,7 @@ MACI uses private keys in the BabyJub field for operations which occur within
 zk-SNARKs, such as decrypting messages or signing commands. As MACI is deployed
 on Ethereum, we seek to avoid confusing BabyJub private keys with Ethereum
 private keys. To that end, users should pass serialized formats of public and
-private keys to this CLI. We use `maci-domainobj`'s `PrivKey.serialize` and
+private keys to this CLI. We use `qaci-domainobj`'s `PrivKey.serialize` and
 `PubKey.serialize` functions to do so. 
 
 Examples of serialized public and private keys:

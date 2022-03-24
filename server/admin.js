@@ -1,6 +1,6 @@
 const argparse = require('argparse')
 const {updateRecord, removeRecord, queryRecord} = require('./db')
-const {readJSONFile} = require('maci-common')
+const {readJSONFile} = require('qaci-common')
 
 const updateSubparser = (subparsers) => {
     const createParser = subparsers.addParser(

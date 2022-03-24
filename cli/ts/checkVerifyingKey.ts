@@ -13,11 +13,11 @@ import {
 import {
     getDefaultSigner,
     parseArtifact,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
 
-import { extractVk } from 'maci-circuits'
-import { VerifyingKey } from 'maci-domainobjs'
+import { extractVk } from 'qaci-circuits'
+import { VerifyingKey } from 'qaci-domainobjs'
 
 const { ethers } = require('hardhat')
 

@@ -1,10 +1,10 @@
 {
-    "name": "maci-cli",
+    "name": "qaci-cli",
     "version": "1.0.6",
     "description": "",
     "main": "build/index.js",
     "bin": {
-        "maci-cli": "./build/index.js"
+        "qaci-cli": "./build/index.js"
     },
     "scripts": {
         "watch": "tsc --watch",
@@ -22,12 +22,12 @@
         "ffiasm": "0.1.3",
         "hardhat": "^2.0.11",
         "js-yaml": "4.0.0",
-        "maci-circuits": "^1.0.6",
-        "maci-common": "^1.0.5",
-        "maci-contracts": "^1.0.6",
-        "maci-core": "^1.0.6",
-        "maci-crypto": "^1.0.6",
-        "maci-domainobjs": "^1.0.6",
+        "qaci-circuits": "^1.0.6",
+        "qaci-common": "^1.0.5",
+        "qaci-contracts": "^1.0.6",
+        "qaci-core": "^1.0.6",
+        "qaci-crypto": "^1.0.6",
+        "qaci-domainobjs": "^1.0.6",
         "prompt-async": "^0.9.9",
         "shelljs": "^0.8.4",
         "snarkjs": "0.4.10",
