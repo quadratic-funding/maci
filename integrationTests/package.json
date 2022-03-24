@@ -1,6 +1,6 @@
 {
     "name": "qaci-integrationtests",
-    "version": "1.0.6",
+    "version": "1.0.7",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -29,13 +29,13 @@
         "hardhat-contract-sizer": "^2.0.3",
         "jest": "^26.6.3",
         "js-yaml": "^4.0.0",
-        "qaci-circuits": "^1.0.6",
-        "qaci-cli": "^1.0.6",
-        "qaci-contracts": "^1.0.6",
-        "qaci-core": "^1.0.6",
-        "qaci-crypto": "^1.0.6",
-        "qaci-domainobjs": "^1.0.6",
         "module-alias": "^2.2.2",
+        "qaci-circuits": "^1.0.7",
+        "qaci-cli": "^1.0.7",
+        "qaci-contracts": "^1.0.7",
+        "qaci-core": "^1.0.7",
+        "qaci-crypto": "^1.0.7",
+        "qaci-domainobjs": "^1.0.7",
         "shelljs": "^0.8.3",
         "ts-jest": "^26.5.4"
     },
