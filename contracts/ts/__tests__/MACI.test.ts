@@ -174,8 +174,17 @@ describe('MACI', () => {
                     signUpTxOpts,
                 )
             } catch (e) {
-                const error = 'MACI: _pubKey values should be less than the snark scalar field'
-                expect(e.message.endsWith(error)).toBeTruthy()
+                const error = "VM Exception while processing transaction: reverted with reason string 'MACI: _pubKey values should be less than the snark scalar field'"
+            
+                if (e.message === error) {
+                  console.log("good?")
+                }
+                if (e.message != error) {
+                  console.log("bbad?")
+                }
+                
+                                
+                expect(e.message).toEqual(error)
             }
         })
     })
