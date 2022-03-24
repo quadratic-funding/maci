@@ -335,11 +335,13 @@ class Poll {
                 m
 
             const r = this.processMessage(messageIndex)
-            //console.log(messageIndex, r ? 'valid' : 'invalid')
+            console.log(messageIndex, r ? 'valid' : 'invalid')
+            console.log("r:"+r )
 
             // If the command is valid
-            if (r) {
-                // TODO: replace with try/catch after implementing error
+            try{
+
+              // TODO: replace with try/catch after implementing error
                 // handling
                 const index = r.stateLeafIndex
 
@@ -357,46 +359,46 @@ class Poll {
                 this.ballots[index] = r.newBallot
                 this.ballotTree.update(index, r.newBallot.hash())
 
-            } else {
-                // Since the command is invalid, use a blank state leaf
-                currentStateLeaves.unshift(this.stateLeaves[0].copy())
-                currentStateLeavesPathElements.unshift(
-                    this.stateTree.genMerklePath(0).pathElements
-                )
+            }catch(e){
+              // Since the command is invalid, use a blank state leaf
+              currentStateLeaves.unshift(this.stateLeaves[0].copy())
+              currentStateLeavesPathElements.unshift(
+                  this.stateTree.genMerklePath(0).pathElements
+              )
 
-                currentBallots.unshift(this.ballots[0].copy())
-                currentBallotsPathElements.unshift(
-                    this.ballotTree.genMerklePath(0).pathElements
-                )
+              currentBallots.unshift(this.ballots[0].copy())
+              currentBallotsPathElements.unshift(
+                  this.ballotTree.genMerklePath(0).pathElements
+              )
 
-                // Since the command is invalid, use vote option index 0
-                currentVoteWeights.unshift(this.ballots[0].votes[0])
+              // Since the command is invalid, use vote option index 0
+              currentVoteWeights.unshift(this.ballots[0].votes[0])
 
-                // No need to iterate through the entire votes array if the
-                // remaining elements are 0
-                let lastIndexToInsert = this.ballots[0].votes.length - 1
-                while (lastIndexToInsert > 0) {
-                    if (this.ballots[0].votes[lastIndexToInsert] === BigInt(0)) {
-                        lastIndexToInsert --
-                    } else {
-                        break
-                    }
-                }
+              // No need to iterate through the entire votes array if the
+              // remaining elements are 0
+              let lastIndexToInsert = this.ballots[0].votes.length - 1
+              while (lastIndexToInsert > 0) {
+                  if (this.ballots[0].votes[lastIndexToInsert] === BigInt(0)) {
+                      lastIndexToInsert --
+                  } else {
+                      break
+                  }
+              }
 
-                const vt = new IncrementalQuinTree(
-                    this.treeDepths.voteOptionTreeDepth,
-                    BigInt(0),
-                    5,
-                    hash5,
-                )
-                for (let i = 0; i <= lastIndexToInsert; i ++) {
-                    vt.insert(this.ballots[0].votes[i])
-                }
-                currentVoteWeightsPathElements.unshift(
-                    vt.genMerklePath(0).pathElements
-                )
-
+              const vt = new IncrementalQuinTree(
+                  this.treeDepths.voteOptionTreeDepth,
+                  BigInt(0),
+                  5,
+                  hash5,
+              )
+              for (let i = 0; i <= lastIndexToInsert; i ++) {
+                  vt.insert(this.ballots[0].votes[i])
+              }
+              currentVoteWeightsPathElements.unshift(
+                  vt.genMerklePath(0).pathElements
+              )
             }
+            
         }
         circuitInputs.currentStateLeaves = currentStateLeaves.map((x) => x.asCircuitInputs())
         circuitInputs.currentStateLeavesPathElements = currentStateLeavesPathElements
