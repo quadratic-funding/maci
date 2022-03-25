@@ -394,7 +394,7 @@ class Poll {
                       currentVoteWeightsPathElements.unshift(
                           vt.genMerklePath(0).pathElements
                       )
-                      break;
+               
 
                 } else {
                     throw e
