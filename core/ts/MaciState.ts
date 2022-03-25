@@ -600,12 +600,12 @@ class Poll {
                 stateLeafIndex >= BigInt(this.ballots.length) ||
                 stateLeafIndex < BigInt(1)
             ) {
-                console.log("invalid state tree index")
+                // console.log("invalid state tree index")
                 return {}
             }
 
             if (stateLeafIndex >= BigInt(this.stateTree.nextIndex)) {
-              console.log("invalid state tree index")
+                // console.log("invalid state tree index")
                 return {}
             }
 
@@ -617,7 +617,7 @@ class Poll {
 
             // If the signature is invalid, do nothing
             if (!command.verifySignature(signature, stateLeaf.pubKey)) {
-                console.log('Invalid signature. pubkeyx =', stateLeaf.pubKey.rawPubKey[0], 'sig', signature)
+                // console.log('Invalid signature. pubkeyx =', stateLeaf.pubKey.rawPubKey[0], 'sig', signature)
                 return {}
             }
 
@@ -625,7 +625,7 @@ class Poll {
 
             // If the nonce is invalid, do nothing
             if (command.nonce !== BigInt(`${ballot.nonce}`) + BigInt(1)) {
-              console.log('Invalid nonce. nonce =', ballot.nonce, 'command.nonce =', command.nonce) 
+              // console.log('Invalid nonce. nonce =', ballot.nonce, 'command.nonce =', command.nonce) 
                 return {}
             }
 
@@ -639,7 +639,7 @@ class Poll {
 
             // If the remaining voice credits is insufficient, do nothing
             if (voiceCreditsLeft < BigInt(0)) {
-                console.log("no op")
+                // console.log("no op")
                 return {}
             }
 
@@ -648,7 +648,7 @@ class Poll {
                 command.voteOptionIndex < BigInt(0) ||
                 command.voteOptionIndex >= BigInt(this.maxValues.maxVoteOptions)
             ) {
-              console.log("no op")
+              // console.log("no op")
                 return {}
             }
 
