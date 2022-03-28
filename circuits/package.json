@@ -1,6 +1,6 @@
 {
     "name": "qaci-circuits",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "description": "",
     "main": "build/index.js",
     "scripts": {
@@ -57,7 +57,7 @@
         "axios": "^0.21.0",
         "circom-helper": "^0.3.0",
         "jest": "^26.6.3",
-        "qaci-core": "^1.1.6",
+        "qaci-core": "^1.1.7",
         "qaci-crypto": "^1.1.0",
         "qaci-domainobjs": "^1.1.0",
         "ts-jest": "^26.5.4",
