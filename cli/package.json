@@ -1,6 +1,6 @@
 {
     "name": "qaci-cli",
-    "version": "1.1.5",
+    "version": "1.1.6",
     "description": "",
     "main": "build/index.js",
     "bin": {
@@ -23,10 +23,10 @@
         "hardhat": "^2.0.11",
         "js-yaml": "4.0.0",
         "prompt-async": "^0.9.9",
-        "qaci-circuits": "^1.1.5",
+        "qaci-circuits": "^1.1.6",
         "qaci-common": "^1.0.7",
-        "qaci-contracts": "^1.1.5",
-        "qaci-core": "^1.1.5",
+        "qaci-contracts": "^1.1.6",
+        "qaci-core": "^1.1.6",
         "qaci-crypto": "^1.1.0",
         "qaci-domainobjs": "^1.1.0",
         "shelljs": "^0.8.4",
