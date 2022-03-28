@@ -11,7 +11,7 @@ import {
     sha256Hash,
     stringifyBigInts,
     Signature,
-} from 'qaci-crypto'
+} from 'maci-crypto'
 import {
     PubKey,
     VerifyingKey,
@@ -20,7 +20,7 @@ import {
     Keypair,
     StateLeaf,
     Ballot,
-} from 'qaci-domainobjs'
+} from 'maci-domainobjs'
 
 interface TreeDepths {
     intStateTreeDepth: number;
@@ -551,25 +551,16 @@ class Poll {
         }
         const stateLeaves = this.stateLeaves.map((x) => x.copy())
         const ballots = this.ballots.map((x) => x.copy())
-        
-        for (let i = 0; i < this.messages.length; i ++) {
-            const messageIndex = this.messages.length - i - 1
-            const r = this.processMessage(messageIndex)
-            if (r) {
-                // TODO: replace with try/catch after implementing error
-                // handling
-                const index = r.stateLeafIndex
-                stateLeaves[index] = r.newStateLeaf
-                ballots[index] = r.newBallot
-            }
+        while (this.hasUnprocessedMessages()){
+          this.processMessages(this.pollId)
         }
 
         return { stateLeaves, ballots }
     }
 
     /*
-     * Process one message
-     */
+    * Process one message
+    */
     private processMessage = (
         _index: number,
     ) => {
@@ -600,12 +591,14 @@ class Poll {
                 stateLeafIndex >= BigInt(this.ballots.length) ||
                 stateLeafIndex < BigInt(1)
             ) {
+                throw Error("no-op")
                 // console.log("invalid state tree index")
                 return {}
             }
 
             if (stateLeafIndex >= BigInt(this.stateTree.nextIndex)) {
                 // console.log("invalid state tree index")
+                //TODO: handle error 
                 return {}
             }
 
@@ -618,6 +611,7 @@ class Poll {
             // If the signature is invalid, do nothing
             if (!command.verifySignature(signature, stateLeaf.pubKey)) {
                 // console.log('Invalid signature. pubkeyx =', stateLeaf.pubKey.rawPubKey[0], 'sig', signature)
+                throw Error("no-op")
                 return {}
             }
 
@@ -626,6 +620,7 @@ class Poll {
             // If the nonce is invalid, do nothing
             if (command.nonce !== BigInt(`${ballot.nonce}`) + BigInt(1)) {
               // console.log('Invalid nonce. nonce =', ballot.nonce, 'command.nonce =', command.nonce) 
+                throw Error("no-op")
                 return {}
             }
 
@@ -640,6 +635,7 @@ class Poll {
             // If the remaining voice credits is insufficient, do nothing
             if (voiceCreditsLeft < BigInt(0)) {
                 // console.log("no op")
+                throw Error("no-op")
                 return {}
             }
 
@@ -649,6 +645,7 @@ class Poll {
                 command.voteOptionIndex >= BigInt(this.maxValues.maxVoteOptions)
             ) {
               // console.log("no op")
+                throw Error("no-op")
                 return {}
             }
 
