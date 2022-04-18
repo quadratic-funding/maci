@@ -2,12 +2,12 @@ import * as ethers from 'ethers'
 import * as fs from 'fs'
 import * as path from 'path'
 
-import { hashLeftRight } from 'maci-crypto'
+import { hashLeftRight } from 'qaci-crypto'
 import {
     formatProofForVerifierContract,
     getDefaultSigner,
     parseArtifact,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
 import {
     validateEthAddress,
@@ -15,7 +15,7 @@ import {
     delay,
 } from './utils'
 
-import {readJSONFile} from 'maci-common'
+import {readJSONFile} from 'qaci-common'
 import {contractFilepath} from './config'
 
 const configureSubparser = (subparsers: any) => {

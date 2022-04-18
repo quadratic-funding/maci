@@ -1,4 +1,4 @@
-# `maci-core`
+# `qaci-core`
 
 This submodule assists with handling key business logic functions and
 processes.

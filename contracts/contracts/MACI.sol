@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.2;
+pragma solidity ^0.8.1;
 
 import {
     Poll,
@@ -30,14 +30,14 @@ contract MACI is IMACI, DomainObjs, Params, SnarkCommon, Ownable {
 
     // The state tree depth is fixed. As such it should be as large as feasible
     // so that there can be as many users as possible.  i.e. 5 ** 10 = 9765625
-    uint8 public override stateTreeDepth = 10;
+    uint256 public override stateTreeDepth = 10;
 
     // IMPORTANT: remember to change the spent voice credits tree in Poll.sol
     // if we change the state tree depth!
 
-    uint8 constant internal STATE_TREE_SUBDEPTH = 2;
-    uint8 constant internal STATE_TREE_ARITY = 5;
-    uint8 constant internal MESSAGE_TREE_ARITY = 5;
+    uint256 constant internal STATE_TREE_SUBDEPTH = 2;
+    uint256 constant internal STATE_TREE_ARITY = 5;
+    uint256 constant internal MESSAGE_TREE_ARITY = 5;
 
     // The Keccack256 hash of 'Maci'
     uint256 constant internal NOTHING_UP_MY_SLEEVE
@@ -303,8 +303,8 @@ contract MACI is IMACI, DomainObjs, Params, SnarkCommon, Ownable {
 
         // The message batch size and the tally batch size
         BatchSizes memory batchSizes = BatchSizes(
-            MESSAGE_TREE_ARITY ** uint8(_treeDepths.messageTreeSubDepth),
-            STATE_TREE_ARITY ** uint8(_treeDepths.intStateTreeDepth)
+            uint8(MESSAGE_TREE_ARITY) ** uint8(_treeDepths.messageTreeSubDepth),
+            uint8(STATE_TREE_ARITY) ** uint8(_treeDepths.intStateTreeDepth)
         );
 
         Poll p = pollFactory.deploy(

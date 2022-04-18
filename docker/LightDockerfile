@@ -1,4 +1,4 @@
-FROM chaosma/maci:v0.5 as maci-node
+FROM chaosma/maci:v0.5 as qaci-node
 
 ARG COMMIT_SHA=unknown
 ARG REPO_NAME="https://github.com/chaosma/maci.git"

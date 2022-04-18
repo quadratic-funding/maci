@@ -1,11 +1,11 @@
 import {
     getDefaultSigner,
     parseArtifact,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
 import {
     PubKey,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 
 import {
@@ -13,7 +13,7 @@ import {
     contractExists,
 } from './utils'
 
-import {readJSONFile} from 'maci-common'
+import {readJSONFile} from 'qaci-common'
 
 const { ethers } = require('hardhat')
 

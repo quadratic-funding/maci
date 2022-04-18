@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.2;
+pragma solidity ^0.8.1;
 
 contract Params {
     // This structs help to reduce the number of parameters to the constructor

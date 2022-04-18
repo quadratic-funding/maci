@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 as maci-node
+FROM ubuntu:20.04 as qaci-node
 
 ARG COMMIT_SHA=unknown
 ARG REPO_NAME="https://github.com/chaosma/maci.git"

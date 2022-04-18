@@ -300,7 +300,7 @@ npm run hardhat
 zk-SNARKs, such as decrypting messages or signing commands. As MACI is deployed
 on Ethereum, we seek to avoid confusing BabyJub private keys with Ethereum
 private keys. To that end, users should pass serialized formats of public and
-private keys to this CLI. We use <code>maci-domainobj</code>'s <code>PrivKey.serialize</code> and
+private keys to this CLI. We use <code>qaci-domainobj</code>'s <code>PrivKey.serialize</code> and
 <code>PubKey.serialize</code> functions to do so. </p>
 <p>Examples of serialized public and private keys:</p>
 <pre><code>Private key: macisk.49953af3585856f539d194b46c82f4ed54ec508fb9b882940cbe68bbc57e59e
@@ -337,7 +337,7 @@ node build/index.js setVerifyingKeys \
 Generating ./zkeys/TallyVotes_10-1-2_test.0.zkey.vk.json, please wait...
 Transaction hash: 0x582631c36a4e21e0b65c3f9100c6343408c8683a36ded36fc02a9be07fa079e8
 </code></pre>
-<h3 id="coordinator-create-maci-instance"><a class="header" href="#coordinator-create-maci-instance">Coordinator: Create MACI instance</a></h3>
+<h3 id="coordinator-create-qaci-instance"><a class="header" href="#coordinator-create-qaci-instance">Coordinator: Create MACI instance</a></h3>
 <p>Example usage:</p>
 <pre><code class="language-bash">ETH_SK=0xc87509a1c067bbde78beb793e6fa76530b6382a4c0241e5e4a9ec0a0f44dc0d3 \
 ETH_PROVIDER=http://localhost:8545 \

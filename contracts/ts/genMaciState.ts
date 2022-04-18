@@ -3,7 +3,7 @@ import {
     PubKey,
     Message,
     VerifyingKey,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import {
     parseArtifact,
@@ -11,7 +11,7 @@ import {
 
 import {
     MaciState,
-} from 'maci-core'
+} from 'qaci-core'
 
 import * as ethers from 'ethers'
 import * as assert from 'assert'

@@ -8,7 +8,7 @@ import {
     Command,
     VerifyingKey,
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import {
     MaciState,
@@ -16,9 +16,9 @@ import {
     genTallyVkSig,
     MaxValues,
     TreeDepths,
-} from 'maci-core'
+} from 'qaci-core'
 
-import { G1Point, G2Point } from 'maci-crypto'
+import { G1Point, G2Point } from 'qaci-crypto'
 
 const STATE_TREE_DEPTH = 10
 const STATE_TREE_ARITY = 5

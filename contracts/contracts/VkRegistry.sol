@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.2;
+pragma solidity ^0.8.1;
 
 import { SnarkCommon } from "./crypto/SnarkCommon.sol";
 import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
