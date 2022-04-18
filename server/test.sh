@@ -1,7 +1,7 @@
 #!/bin/bash
 
 function copy_tally() {
-  CONTAINER_ID=$(docker container ls | grep maci-node | cut -d' ' -f1)
+  CONTAINER_ID=$(docker container ls | grep qaci-node | cut -d' ' -f1)
   docker cp $1 $CONTAINER_ID:/root/maci/cli/ 
 }
 

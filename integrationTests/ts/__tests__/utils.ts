@@ -9,7 +9,7 @@ import {
     PrivKey,
     Keypair,
     Command,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 const exec = (command: string) => {
     return shell.exec('cd ../cli/ && ' + command, { silent: true })

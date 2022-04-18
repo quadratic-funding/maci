@@ -1,19 +1,19 @@
 import * as fs from 'fs'
 
-import { genTallyResultCommitment } from 'maci-core'
-import { hash2, hash3 } from 'maci-crypto'
+import { genTallyResultCommitment } from 'qaci-core'
+import { hash2, hash3 } from 'qaci-crypto'
 
 import {
     parseArtifact,
     getDefaultSigner,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
 import {
     calcQuinTreeDepthFromMaxLeaves,
     validateEthAddress,
     contractExists,
 } from './utils'
-import {readJSONFile} from 'maci-common'
+import {readJSONFile} from 'qaci-common'
 import {contractFilepath} from './config'
 
 import * as ethers from 'ethers'

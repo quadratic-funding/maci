@@ -5,7 +5,7 @@
 Follow [instruction](https://appliedzkp.github.io/maci/) to setup environment and dependency, then
 
 ```bash
-docker build -t maci-node:v0.5 - < LightDockerfile
+docker build -t qaci-node:v0.5 - < LightDockerfile
 cd docker
 ./setup.sh
 ```

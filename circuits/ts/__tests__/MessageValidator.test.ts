@@ -8,12 +8,12 @@ import {
     stringifyBigInts,
     encrypt,
     genRandomSalt,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 import {
     Command,
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 describe('MessageValidator circuit', () => {
     const circuit = 'messageValidator_test'

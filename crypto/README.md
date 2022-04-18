@@ -1,4 +1,4 @@
-# maci-crypto
+# qaci-crypto
 
 This module implements abstractions over cryptographic functions which MACI
 employs.

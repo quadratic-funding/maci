@@ -3,7 +3,7 @@ require('module-alias/register')
 import {
     AccQueue,
     NOTHING_UP_MY_SLEEVE,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
 
 let aqContract

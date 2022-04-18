@@ -3,9 +3,9 @@ import {
     deployFreeForAllSignUpGatekeeper,
     deployMaci,
     deployVerifier,
-} from 'maci-contracts'
+} from 'qaci-contracts'
 
-import {readJSONFile, writeJSONFile} from 'maci-common'
+import {readJSONFile, writeJSONFile} from 'qaci-common'
 import {contractFilepath} from './config'
 
 import {

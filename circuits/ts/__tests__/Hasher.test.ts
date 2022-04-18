@@ -7,7 +7,7 @@ import {
 import {
     Command,
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import {
     stringifyBigInts,
@@ -18,7 +18,7 @@ import {
     hash5,
     hash4,
     hash3,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 describe('Poseidon hash circuits', () => {
     describe('SHA256', () => {

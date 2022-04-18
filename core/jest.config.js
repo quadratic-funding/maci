@@ -9,7 +9,7 @@ module.exports = {
     ],
     testRegex: '/__tests__/.*\\.test\\.ts$',
     moduleNameMapper: {
-      "^@maci-contracts(.*)$": "<rootDir>./../contracts/$1",
+      "^@qaci-contracts(.*)$": "<rootDir>./../contracts/$1",
     },
     moduleFileExtensions: [
         'ts',

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # linux: replace ip by docker gateway ip
-export mongo_uri='mongodb://maci-coordinator:let-me-in@host.docker.internal'
+export mongo_uri='mongodb://qaci-coordinator:let-me-in@host.docker.internal'
 
 ProgName=$(basename $0)
 DirName=$(dirname $0)"/../../maci_v0_10"

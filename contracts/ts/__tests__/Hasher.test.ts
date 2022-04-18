@@ -6,7 +6,7 @@ import {
     hash4,
     hash5,
     genRandomSalt,
-} from 'maci-crypto'
+} from 'qaci-crypto'
 
 
 import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
@@ -28,7 +28,7 @@ describe('Hasher', () => {
 		await hasherContract.deployTransaction.wait()
     })
 
-    it('maci-crypto.sha256Hash should match hasher.sha256Hash', async () => {
+    it('qaci-crypto.sha256Hash should match hasher.sha256Hash', async () => {
         expect.assertions(5)
         const values: string[] = []
         for (let i = 0; i < 5; i++) {
@@ -40,7 +40,7 @@ describe('Hasher', () => {
         }
     })
 
-    it('maci-crypto.hashLeftRight should match hasher.hashLeftRight', async () => {
+    it('qaci-crypto.hashLeftRight should match hasher.hashLeftRight', async () => {
         const left = genRandomSalt()
         const right = genRandomSalt()
         const hashed = hashLeftRight(left, right)
@@ -49,7 +49,7 @@ describe('Hasher', () => {
         expect(onChainHash.toString()).toEqual(hashed.toString())
     })
 
-    it('maci-crypto.hash3 should match hasher.hash3', async () => {
+    it('qaci-crypto.hash3 should match hasher.hash3', async () => {
         const values: string[] = []
         for (let i = 0; i < 3; i++) {
             values.push(genRandomSalt().toString())
@@ -60,7 +60,7 @@ describe('Hasher', () => {
         expect(onChainHash.toString()).toEqual(hashed.toString())
     })
 
-    it('maci-crypto.hash4 should match hasher.hash4', async () => {
+    it('qaci-crypto.hash4 should match hasher.hash4', async () => {
         const values: string[] = []
         for (let i = 0; i < 4; i++) {
             values.push(genRandomSalt().toString())
@@ -71,7 +71,7 @@ describe('Hasher', () => {
         expect(onChainHash.toString()).toEqual(hashed.toString())
     })
 
-    it('maci-crypto.hash5 should match hasher.hash5', async () => {
+    it('qaci-crypto.hash5 should match hasher.hash5', async () => {
         const values: string[] = []
         for (let i = 0; i < 5; i++) {
             values.push(genRandomSalt().toString())

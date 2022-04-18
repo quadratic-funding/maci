@@ -1,6 +1,6 @@
 {
-      "name": "maci-server",
-      "version": "1.0.0",
+      "name": "qaci-server",
+      "version": "1.1.0",
       "description": "",
       "main": "index.js",
       "scripts": {
@@ -15,8 +15,8 @@
             "minilog": "^3.1.0",
             "mongodb": "^4.1.4",
             "pg": "^8.7.1",
-            "shelljs": "^0.8.3",
-            "maci-common": "1.0.0"
+            "qaci-common": "1.0.0",
+            "shelljs": "^0.8.3"
       },
       "devDependencies": {
             "@types/node": "^16.11.6"

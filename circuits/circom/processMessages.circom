@@ -461,8 +461,13 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
     enoughVoiceCredits.in[0] <== stateLeaf[STATE_LEAF_VOICE_CREDIT_BALANCE_IDX] + b - c;
     enoughVoiceCredits.in[1] <== 0;
 
+    component isMessageValid = IsEqual();
+    var bothValid = 2; 
+    isMessageValid.in[0] <== bothValid;
+    isMessageValid.in[1] <== transformer.isValid + enoughVoiceCredits.out;
+
     component cmdVoteOptionIndexMux = Mux1();
-    cmdVoteOptionIndexMux.s <== transformer.isValid;
+    cmdVoteOptionIndexMux.s <== isMessageValid.out;
     cmdVoteOptionIndexMux.c[0] <== 0;
     cmdVoteOptionIndexMux.c[1] <== cmdVoteOptionIndex;
 
@@ -481,7 +486,7 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
     currentVoteWeightQip.root === ballot[BALLOT_VO_ROOT_IDX];
 
     component voteWeightMux = Mux1();
-    voteWeightMux.s <== transformer.isValid;
+    voteWeightMux.s <== isMessageValid.out;
     voteWeightMux.c[0] <== currentVoteWeight;
     voteWeightMux.c[1] <== cmdNewVoteWeight;
 
@@ -491,7 +496,7 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
     newSlVoiceCreditBalance.s <== enoughVoiceCredits.out;
 
     component voiceCreditBalanceMux = Mux1();
-    voiceCreditBalanceMux.s <== transformer.isValid;
+    voiceCreditBalanceMux.s <== isMessageValid.out;
     voiceCreditBalanceMux.c[0] <== stateLeaf[STATE_LEAF_VOICE_CREDIT_BALANCE_IDX];
     voiceCreditBalanceMux.c[1] <== newSlVoiceCreditBalance.out;
 
@@ -509,7 +514,7 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
     // The new vote option root in the ballot
     signal newBallotVoRoot;
     component newBallotVoRootMux = Mux1();
-    newBallotVoRootMux.s <== transformer.isValid;
+    newBallotVoRootMux.s <== isMessageValid.out;
     newBallotVoRootMux.c[0] <== ballot[BALLOT_VO_ROOT_IDX];
     newBallotVoRootMux.c[1] <== newVoteOptionTreeQip.root;
     newBallotVoRoot <== newBallotVoRootMux.out;
@@ -536,7 +541,7 @@ template ProcessOne(stateTreeDepth, voteOptionTreeDepth) {
     // 7. Generate a new ballot root
     
     component newBallotNonceMux = Mux1();
-    newBallotNonceMux.s <== transformer.isValid;
+    newBallotNonceMux.s <== isMessageValid.out;
     newBallotNonceMux.c[0] <== ballot[BALLOT_NONCE_IDX];
     newBallotNonceMux.c[1] <== transformer.newBallotNonce;
 

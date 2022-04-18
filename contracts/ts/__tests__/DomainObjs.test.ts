@@ -2,7 +2,7 @@ jest.setTimeout(90000)
 import {
     StateLeaf,
     Keypair,
-} from 'maci-domainobjs'
+} from 'qaci-domainobjs'
 
 import { deployPoseidonContracts, linkPoseidonLibraries } from '../'
 

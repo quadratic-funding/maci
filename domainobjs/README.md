@@ -1,4 +1,4 @@
-# maci-domainobjs
+# qaci-domainobjs
 
 This module implements domain objects. A domain object is:
 
@@ -35,9 +35,9 @@ and/or change one's public key.
 ## `Message`
 
 The `Message` domain object is an encrypted `Command` and signature. That is, a
-`Message` is a `Ciphertext` (defined in [`maci-crypto`](../crypto/README.md))
+`Message` is a `Ciphertext` (defined in [`qaci-crypto`](../crypto/README.md))
 which is the encrypted `Command` and its `Signature` (also defined in
-`maci-crypto`). In other terms:
+`qaci-crypto`). In other terms:
 
 ```
 Message = Encrypt([Command, Signature], Key)

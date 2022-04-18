@@ -6,7 +6,7 @@ require('@nomiclabs/hardhat-ethers')
 require('hardhat-artifactor')
 
 module.exports = {
-  solidity: "0.7.2",
+  solidity: "0.8.1",
   settings: {
     optimizer: {
       enabled: true,

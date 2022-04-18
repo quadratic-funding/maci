@@ -17,8 +17,8 @@ module.exports = {
         'node'
     ],
     moduleNameMapper: {
-      "^@maci-contracts(.*)$": "<rootDir>../contracts/$1",
-      "^@maci-integrationTests(.*)$": "<rootDir>./$1",
+      "^@qaci-contracts(.*)$": "<rootDir>../contracts/$1",
+      "^@qaci-integrationTests(.*)$": "<rootDir>./$1",
     },
     globals: {
         'ts-jest': {
