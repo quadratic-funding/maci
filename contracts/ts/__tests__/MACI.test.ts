@@ -174,17 +174,8 @@ describe('MACI', () => {
                     signUpTxOpts,
                 )
             } catch (e) {
-                const error = "VM Exception while processing transaction: reverted with reason string 'MACI: _pubKey values should be less than the snark scalar field'"
-            
-                if (e.message === error) {
-                  console.log("good?")
-                }
-                if (e.message != error) {
-                  console.log("bbad?")
-                }
-                
-                                
-                expect(e.message).toEqual(error)
+                const error = "'MACI: _pubKey values should be less than the snark scalar field'"               
+                expect(e.message.endsWith(error)).toBeTruthy()
             }
         })
     })
@@ -194,14 +185,14 @@ describe('MACI', () => {
             try {
                 await maciContract.mergeStateAqSubRoots(0, 0, { gasLimit: 3000000 })
             } catch (e) {
-                const error = 'MACI: only a Poll contract can call this function'
+                const error = "'MACI: only a Poll contract can call this function'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
 
             try {
                 await maciContract.mergeStateAq(0, { gasLimit: 3000000 })
             } catch (e) {
-                const error = 'MACI: only a Poll contract can call this function'
+                const error = "'MACI: only a Poll contract can call this function'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
         })
@@ -410,7 +401,7 @@ describe('MACI', () => {
                     { gasLimit: 300000 },
                 )
             } catch (e) {
-                const error = 'PollE03'
+                const error = "'PollE03'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
         })
@@ -443,7 +434,7 @@ describe('MACI', () => {
             try {
                 await pollContract.mergeMaciStateAq(0, { gasLimit: 4000000 })
             } catch (e) {
-                const error = 'PollE08'
+                const error = "'PollE08'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
         })
@@ -483,7 +474,7 @@ describe('MACI', () => {
                     [0, 0, 0, 0, 0, 0, 0, 0],
                 )
             } catch (e) {
-                const error = 'PptE07'
+                const error = "'PptE07'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
 
@@ -503,7 +494,7 @@ describe('MACI', () => {
                 )
 
             } catch (e) {
-                expect(e.message.endsWith('PptE09')).toBeTruthy()
+                expect(e.message.endsWith("'PptE09'")).toBeTruthy()
             }
         })
     })
@@ -655,7 +646,7 @@ describe('MACI', () => {
                     [0, 0, 0, 0, 0, 0, 0, 0],
                 )
             } catch (e) {
-                const error = 'PptE08'
+                const error = "'PptE08'"
                 expect(e.message.endsWith(error)).toBeTruthy()
             }
         })

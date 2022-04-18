@@ -597,7 +597,7 @@ class Poll {
             }
 
             if (stateLeafIndex >= BigInt(this.stateTree.nextIndex)) {
-                throw Error("no-op")
+                // console.log("invalid state tree index")
                 //TODO: handle error 
                 return {}
             }
